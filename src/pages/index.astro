@@ -1,11 +1,64 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+  <main>
+    <div class="circle"></div>
+    <div>Bienvenido a mi portafolio, proximamente habran avances...</div>
+  </main>
+  <!-- <Welcome /> -->
 </Layout>
+
+<style>
+  /* :root {
+	--font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+	--font-size-lg: clamp(1.2rem, 0.7vw + 1.2rem, 1.5rem);
+	--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  } */
+  * {
+    color: white;
+  }
+  .circle {
+    z-index: -1;
+    position: absolute;
+    width: 544px;
+    height: 520px;
+    flex-shrink: 0;
+    border-radius: 544px;
+    background: rgba(128, 0, 128, 0.27);
+    filter: blur(150.25px);
+    animation: pulse 3s infinite;
+  }
+  main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: system-ui, sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    background-color: #05010d;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
