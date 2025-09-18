@@ -1,13 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import meGreating from "../assets/me-waving.png";
+import meGreating from "../assets/me-waving.webp";
 import Circle from "../components/Circle.astro";
 import Button from "../components/Button.astro";
 import CommingSoon from "../components/CommingSoon.astro";
 //images
-import presentationImage from "../assets/presentation-image.png";
-import mePlayingVideoGames from "../assets/me-playing.png";
-import meCoding from "../assets/me-coding.png";
+import presentationImage from "../assets/presentation-image.webp";
+import mePlayingVideoGames from "../assets/me-playing.webp";
+import meCoding from "../assets/me-coding.webp";
 //lucide icons
 import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 ---
@@ -217,7 +217,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     max-width: 500px;
     width: 100%;
     aspect-ratio: 1/1;
-    background: url("../assets/me-greeting.png") no-repeat center;
+    background: url("../assets/me-greeting.webp") no-repeat center;
     background-size: contain;
     animation: transition 6s steps(1, end) infinite;
   }
@@ -254,16 +254,20 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   }
   @keyframes transition {
     0% {
-      background: url("../assets/me-waving.png") no-repeat center;
+      background: url("../assets/me-waving.webp") no-repeat;
+      background-size: contain;
     }
     33% {
-      background: url("../assets/me-playing.png") no-repeat center;
+      background: url("../assets/me-playing.webp") no-repeat;
+      background-size: contain;
     }
     66% {
-      background: url("../assets/me-coding.png") no-repeat center;
+      background: url("../assets/me-coding.webp") no-repeat;
+      background-size: contain;
     }
     100% {
-      background: url("../assets/me-waving.png") no-repeat center;
+      background: url("../assets/me-waving.webp") no-repeat;
+      background-size: contain;
     }
   }
   .emoji {
