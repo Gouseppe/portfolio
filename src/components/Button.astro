@@ -1,0 +1,34 @@
+---
+let { iconPosition, text } = Astro.props;
+---
+
+<button class="button">
+  {iconPosition === "left" ? <slot /> : null}
+  {text && <span>{text}</span>}
+  {iconPosition === "right" ? <slot /> : null}
+</button>
+
+<style>
+  .button {
+    display: flex;
+    width: 79px;
+    height: 79px;
+    padding: 25px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    background: #151515;
+    border: none;
+
+    /* botones */
+    box-shadow: 0 3px 11px var(--spread, 5px) rgba(56, 94, 178, 0.35);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .button:hover {
+    box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35);
+  }
+  /* button:active {
+    box-shadow: 0 3px 6px var(--spread, 5px) rgba(56, 94, 178, 0.35);
+  } */
+</style>
