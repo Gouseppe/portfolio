@@ -1,0 +1,31 @@
+---
+const { color } = Astro.props;
+---
+
+<div style={`--color: ${color};`} class="circle"></div>
+<style>
+  .circle {
+    z-index: -1;
+    position: absolute;
+    width: 544px;
+    height: 520px;
+    flex-shrink: 0;
+    border-radius: 544px;
+    background: var(--color);
+    filter: blur(150.25px);
+    animation: pulse 3s infinite;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
