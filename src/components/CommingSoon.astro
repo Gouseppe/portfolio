@@ -1,0 +1,42 @@
+---
+import Circle from "./Circle.astro";
+---
+
+<div class="main">
+  <div class="circle-container">
+    <Circle color="rgba(128, 0, 128, 0.27)" />
+  </div>
+  <div>Bienvenido a mi portafolio, proximamente habran avances...</div>
+</div>
+<!-- <Welcome /> -->
+
+<style>
+  /* :root {
+	--font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+	--font-size-lg: clamp(1.2rem, 0.7vw + 1.2rem, 1.5rem);
+	--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  } */
+  * {
+    color: white;
+  }
+  .circle {
+    z-index: -1;
+    position: absolute;
+    flex-shrink: 0;
+    border-radius: 544px;
+  }
+  .main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: system-ui, sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    background-color: #05010d;
+  }
+</style>
