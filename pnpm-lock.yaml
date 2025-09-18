@@ -5,9 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@lucide/astro':
+    specifier: ^0.544.0
+    version: 0.544.0(astro@5.13.7)
   astro:
     specifier: ^5.13.7
     version: 5.13.7(typescript@5.9.2)
+  gsap:
+    specifier: ^3.13.0
+    version: 3.13.0
 
 packages:
 
@@ -557,6 +563,14 @@ packages:
 
   /@jridgewell/sourcemap-codec@1.5.5:
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+    dev: false
+
+  /@lucide/astro@0.544.0(astro@5.13.7):
+    resolution: {integrity: sha512-A1OMIplo44RLQ5MefvXOMwHOnR1w/Dvk7q7W0LlKYwwV8pfBavU0nQecyb2rPkIt9dLTd4XfBUFRKCE+1r5gjA==}
+    peerDependencies:
+      astro: ^4 || ^5
+    dependencies:
+      astro: 5.13.7(typescript@5.9.2)
     dev: false
 
   /@oslojs/encoding@1.1.0:
@@ -1381,6 +1395,10 @@ packages:
 
   /github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
+    dev: false
+
+  /gsap@3.13.0:
+    resolution: {integrity: sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw==}
     dev: false
 
   /h3@1.15.4:

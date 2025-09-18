@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.13.7"
+    "@lucide/astro": "^0.544.0",
+    "astro": "^5.13.7",
+    "gsap": "^3.13.0"
   }
 }
