@@ -1,22 +1,41 @@
+---
+const { tittle, description } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{tittle || "Gouseppe - Portafolio"}</title>
+    <meta
+      name="description"
+      content={description || "Portafolio de Gouseppe"}
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+<style is:global>
+  /* variables */
+  :root {
+    --font-size-base: 20px;
+    --font-size-sub-tittle: 32px;
+    --font-size-tittle: 48px;
+  }
+  p {
+    margin: 0;
+  }
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #05010d;
+    font-size: var(--font-size-base);
+  }
 </style>
