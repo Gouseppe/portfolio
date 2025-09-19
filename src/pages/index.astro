@@ -1,12 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import meGreating from "../assets/me-waving.webp";
 import Circle from "../components/Circle.astro";
 import Button from "../components/Button.astro";
 import CommingSoon from "../components/CommingSoon.astro";
 //images
 import presentationImage from "../assets/presentation-image.webp";
-import mePlayingVideoGames from "../assets/me-playing.webp";
+import meWaving from "../assets/me-waving.webp";
+import mePlaying from "../assets/me-playing.webp";
 import meCoding from "../assets/me-coding.webp";
 //lucide icons
 import { Mail, Linkedin, Github, Download } from "@lucide/astro";
@@ -25,6 +25,12 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     </defs>
   </svg> -->
 
+  <div class="pantallaso"></div>
+  <!-- <div class="auxiliar-container">
+    <div class="purple-circle-container">
+      <Circle color="#D9D9D952" />
+    </div>
+  </div> -->
   <section class="section hero">
     <div class="purple-circle-container">
       <Circle color="#D9D9D952" />
@@ -54,7 +60,9 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     </div>
     <div class="hero__right-side">
       <div class="me-images">
-        <!-- las imagenes se agregan por CSS -->
+        <img class="me-waving" src={meWaving.src} alt="" />
+        <img class="me-playing" src={mePlaying.src} alt="" />
+        <img class="me-coding" src={meCoding.src} alt="" />
       </div>
       <div class="right-side__buttons-container">
         <div class="right-side__button-container">
@@ -87,14 +95,14 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     },
     {
       duration: 1,
-      delay: 0.5,
+      delay: 3.5,
       stagger: 0.15,
       y: 0,
       opacity: 1,
       ease: "sine.out",
     }
   );
-  let isAnimating = false; // Variable para controlar el estado de la animación
+  let isAnimating = true; // Variable para controlar el estado de la animación
   const waveTimeline = gsap.timeline({
     onStart: () => {
       isAnimating = true; // Se activa cuando comienza la animación
@@ -103,21 +111,100 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
       isAnimating = false; // Se desactiva cuando termina
     },
   });
-  waveTimeline.to(".emoji", {
-    rotation: 20,
+
+  const algo = gsap.timeline();
+  algo.to(
+    ".emoji",
+
+    {
+      opacity: 1,
+      rotation: 20,
+      // yoyo: true,
+      // repeat: 1,
+      transformOrigin: "bottom right",
+      ease: "power1.inOut",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      duration: 0.5,
+    }
+  );
+  algo.to(".emoji", {
+    rotation: 0,
     duration: 0.5,
     yoyo: true,
-    repeat: 3,
+    repeat: 2,
     transformOrigin: "bottom right",
     ease: "power1.inOut",
   });
+  algo.to(".emoji", {
+    x: 98.5,
+    top: "auto",
+    left: "auto",
+    scale: 1,
+    duration: 0.5,
+    delay: 0.5,
+    ease: "power1.inOut",
+  });
+  algo.to(".pantallaso", {
+    autoAlpha: 0,
+    duration: 0.5,
+    ease: "power1.inOut",
+  });
+  algo.set(".pantallaso", { zIndex: -1 });
 
   const emojiElement = document?.querySelector(".emoji");
   if (emojiElement) {
     emojiElement.addEventListener("mouseenter", () => {
-      !isAnimating && waveTimeline.restart();
+      !isAnimating &&
+        waveTimeline.to(".emoji", {
+          rotation: 20,
+          duration: 0.5,
+          yoyo: true,
+          repeat: 3,
+          transformOrigin: "bottom right",
+          ease: "power1.inOut",
+        });
     });
   }
+
+  const meImagesTimeline = gsap.timeline({ repeat: -1, delay: 3 });
+
+  meImagesTimeline
+    .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
+    .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
+    // Animación de balanceo
+    .to(
+      ".me-waving",
+      { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
+      0.1
+    )
+    .to(
+      ".me-waving",
+      { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
+      0.4
+    )
+    .to(
+      ".me-waving",
+      { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
+      0.7
+    )
+
+    // Segunda imagen: .me-playing
+    .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
+    .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
+    // Animación de salto
+    .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
+    .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+
+    // Tercera imagen: .me-coding
+    .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
+    .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
+    // Animación de zoom
+    .to(".me-coding", { scale: 1.05, duration: 0.2, ease: "power1.inOut" }, 4.1)
+    .to(".me-coding", { scale: 1, duration: 0.3, ease: "power1.inOut" }, 4.3)
+    // Pausa para la última imagen
+    .to({}, { duration: 2 }, 5);
 </script>
 <style>
   /* :root {
@@ -125,19 +212,19 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 	--font-size-lg: clamp(1.2rem, 0.7vw + 1.2rem, 1.5rem);
 	--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
   } */
+
   * {
     color: white;
+  }
+  .me-images img {
+    position: absolute;
+    opacity: 0;
   }
   .purple-circle-container {
     position: absolute;
     top: -200px;
     left: -200px;
-  }
-  .hidden {
-    position: absolute;
-    width: 0;
-    height: 0;
-    overflow: hidden;
+    z-index: 0;
   }
   .circle {
     z-index: -1;
@@ -154,19 +241,27 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   .section {
     margin: 0 auto;
     max-width: 1300px;
-    position: relative;
-    z-index: 1;
+    /* position: relative;
+    z-index: 1; */
     display: flex;
     align-items: center;
     height: 100vh;
     font-family: system-ui, sans-serif;
     font-size: 1.5rem;
     text-align: center;
-
     box-sizing: border-box;
-    background-color: #05010d;
     padding: 10px;
   }
+  /* .auxiliar-container {
+    position: absolute;
+    max-width: 1300px;
+    margin: 0 auto;
+    height: 100vh;
+
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  } */
   .hero {
     flex-direction: row;
   }
@@ -214,12 +309,11 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     margin-top: 20px;
   }
   .me-images {
+    position: relative;
     max-width: 500px;
     width: 100%;
     aspect-ratio: 1/1;
-    background: url("../assets/me-greeting.webp") no-repeat center;
-    background-size: contain;
-    animation: transition 6s steps(1, end) infinite;
+    text-align: left;
   }
   .resume-container {
     position: relative;
@@ -238,8 +332,17 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     width: 100%;
     height: auto;
   }
+  .pantallaso {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 15;
+    height: 100vh;
+    width: 100%;
+    background-color: #05010d;
+  }
 
-  @keyframes pulse {
+  /* @keyframes pulse {
     0% {
       transform: scale(1);
       opacity: 1;
@@ -251,8 +354,8 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
       transform: scale(1);
       opacity: 1;
     }
-  }
-  @keyframes transition {
+  } */
+  /* @keyframes transition {
     0% {
       background: url("../assets/me-waving.webp") no-repeat;
       background-size: contain;
@@ -269,8 +372,15 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
       background: url("../assets/me-waving.webp") no-repeat;
       background-size: contain;
     }
-  }
+  } */
   .emoji {
     transform-origin: bottom center;
+    z-index: 40;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    y: -10;
+    scale: 4;
+    opacity: 0;
   }
 </style>
