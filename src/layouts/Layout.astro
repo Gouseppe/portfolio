@@ -6,8 +6,12 @@ const { tittle, description } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, "
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{tittle || "Gouseppe - Portafolio"}</title>
     <meta
@@ -26,6 +30,9 @@ const { tittle, description } = Astro.props;
     --font-size-base: 20px;
     --font-size-sub-tittle: 32px;
     --font-size-tittle: 48px;
+  }
+  * {
+    box-sizing: border-box;
   }
   p {
     margin: 0;
