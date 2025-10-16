@@ -1,12 +1,24 @@
 ---
-let { iconPosition, text } = Astro.props;
+let { iconPosition, text, link, ariaLabel } = Astro.props;
 ---
 
-<button class="button">
-  {iconPosition === "left" ? <slot /> : null}
+<a class="button" href={link} target="_blank" aria-label={ariaLabel}>
+  {
+    iconPosition === "left" ? (
+      <div class="icon">
+        <slot />
+      </div>
+    ) : null
+  }
   {text && <span>{text}</span>}
-  {iconPosition === "right" ? <slot /> : null}
-</button>
+  {
+    iconPosition === "right" ? (
+      <div class="icon">
+        <slot />
+      </div>
+    ) : null
+  }
+</a>
 
 <style>
   .button {
@@ -25,9 +37,16 @@ let { iconPosition, text } = Astro.props;
     box-shadow: 0 3px 11px var(--spread, 5px) rgba(56, 94, 178, 0.35);
     transition: box-shadow 0.3s ease-in-out;
   }
+  .icon {
+    transition: transform 0.3s ease-in-out;
+  }
   .button:hover {
     box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35);
   }
+  .button:hover .icon {
+    transform: scale(1.1);
+  }
+
   /* button:active {
     box-shadow: 0 3px 6px var(--spread, 5px) rgba(56, 94, 178, 0.35);
   } */
