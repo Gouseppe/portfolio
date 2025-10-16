@@ -45,4 +45,11 @@ const { tittle, description } = Astro.props;
     background-color: #05010d;
     font-size: var(--font-size-base);
   }
+  @media (max-width: 760px) {
+    :root {
+      --font-size-base: 16;
+      --font-size-sub-tittle: 24px;
+      --font-size-tittle: 38px;
+    }
+  }
 </style>
