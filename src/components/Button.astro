@@ -47,7 +47,13 @@ let { iconPosition, text, link, ariaLabel } = Astro.props;
     transform: scale(1.1);
   }
 
-  /* button:active {
-    box-shadow: 0 3px 6px var(--spread, 5px) rgba(56, 94, 178, 0.35);
-  } */
+  @media (max-width: 760px) {
+    .button {
+      width: 69px;
+      height: 69px;
+      padding: 20px;
+
+      gap: 10px;
+    }
+  }
 </style>
