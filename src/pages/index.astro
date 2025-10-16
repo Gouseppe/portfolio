@@ -32,6 +32,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
       <div class="purple-circle-container">
         <Circle color="#D9D9D952" />
       </div>
+
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -43,6 +44,38 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         <div class="hero__phrase">
           <p>“si puedes imaginarlo puedes programarlo”</p>
           <p>-Programacion ATS</p>
+        </div>
+        <div class="right-side__buttons-container mobile">
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel="Linkedin de fernando gouseppe tadeo guzman fiorillo"
+              link="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
+            >
+              <Linkedin width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel="GitHub de Fernando Gouseppe"
+              link="https://github.com/gouseppe"
+            >
+              <Github width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel="Correo de Fernando Gouseppe"
+              link="mailto:gouseppe.dev@gmail.com"
+            >
+              <Mail width={"100%"} height={"100%"} />
+            </Button>
+          </div>
         </div>
         <div class="resume-container">
           <div class="download-icon">
@@ -105,88 +138,101 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
           </div>
         </div>
       </div>
+      <div class="hero__greeting mobile">
+        <p>Bienvenido!</p>
+        <span class="emoji mobile">👋</span>
+      </div>
     </section>
     <CommingSoon />
   </main>
 </Layout>
 <script>
   import { gsap } from "gsap";
-  gsap.fromTo(
-    ".right-side__button-container",
-    {
-      y: 20,
-      opacity: 0, // Animamos desde opacity: 0
-    },
-    {
-      duration: 1,
-      delay: 3.5,
-      stagger: 0.15,
-      y: 0,
-      opacity: 1,
-      ease: "sine.out",
-    }
-  );
 
   let isAnimating = false; // Variable para controlar el estado de la animación
-  const emoji = document?.querySelector(".emoji") as HTMLElement;
-
-  const initialAnimation = gsap.timeline({
-    defaults: { ease: "power1.inOut" },
-    onComplete: () => {
-      // Aquí agregas el listener solo cuando termina toda la animación inicial
-      const emojiElement = document?.querySelector(".emoji");
-      if (emojiElement) {
-        emojiElement.addEventListener("mouseenter", () => {
-          if (!isAnimating) {
-            gsap.to(".emoji", {
-              rotation: 20,
-              duration: 0.5,
-              yoyo: true,
-              repeat: 3,
-              transformOrigin: "bottom right",
-              ease: "power1.inOut",
-              onStart: () => {
-                isAnimating = true;
-              },
-              onComplete: () => {
-                isAnimating = false;
-              },
-            });
-          }
-        });
-      }
+  let mm = gsap.matchMedia();
+  mm.add(
+    {
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
     },
-  });
-  initialAnimation
-    .set(emoji, {
-      top: "50%",
-      left: "50%",
-      position: "absolute",
-      transformOrigin: "bottom right",
-    })
-    .to(emoji, {
-      opacity: 1,
-      duration: 0.9,
-    })
-    .to(emoji, {
-      rotation: 20,
-      yoyo: true,
-      repeat: 3,
-      duration: 0.5,
-    })
-    .to(emoji, {
-      top: "auto",
-      left: "auto",
-      scale: 1,
-      duration: 0.5,
-      delay: 0.5,
-      x: 98.5,
-    })
-    .to(".black-screen", {
-      zindex: -1,
-      autoAlpha: 0,
-      duration: 0.5,
-    });
+    (context: any) => {
+      let { isMobile, isDesktop } = context.conditions;
+      const emoji = isMobile
+        ? (document.querySelector(".emoji.mobile") as HTMLElement)
+        : (document.querySelector(".emoji") as HTMLElement);
+
+      const initialAnimation = gsap.timeline({
+        defaults: { ease: "power1.inOut" },
+        onComplete: () => {
+          // Aquí agregas el listener solo cuando termina toda la animación inicial
+
+          emoji.addEventListener("mouseenter", () => {
+            if (!isAnimating) {
+              gsap.to(".emoji", {
+                rotation: 20,
+                duration: 0.5,
+                yoyo: true,
+                repeat: 3,
+                transformOrigin: "bottom right",
+                ease: "power1.inOut",
+                onStart: () => {
+                  isAnimating = true;
+                },
+                onComplete: () => {
+                  isAnimating = false;
+                },
+              });
+            }
+          });
+        },
+      });
+      initialAnimation
+        .set(emoji, {
+          top: "50%",
+          left: "50%",
+          position: "absolute",
+          transformOrigin: "bottom right",
+        })
+        .to(emoji, {
+          opacity: 1,
+          duration: 0.9,
+        })
+        .to(emoji, {
+          rotation: 20,
+          yoyo: true,
+          repeat: 3,
+          duration: 0.5,
+        })
+        .to(emoji, {
+          top: "auto",
+          left: "auto",
+          scale: 1,
+          duration: 0.5,
+          delay: 0.5,
+          x: isMobile ? 98.295 : 98.5,
+        })
+        .to(".black-screen", {
+          zIndex: -1,
+          autoAlpha: 0,
+          duration: 0.5,
+        })
+        .fromTo(
+          ".right-side__button-container",
+          {
+            y: 20,
+            opacity: 0, // Animamos desde opacity: 0
+          },
+          {
+            duration: 1,
+            stagger: 0.15,
+            y: 0,
+            opacity: 1,
+            ease: "sine.out",
+          }
+        );
+    }
+  );
 
   const meImagesTimeline = gsap.timeline({ repeat: -1, delay: 3 });
 
@@ -235,6 +281,9 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 
   * {
     color: white;
+  }
+  body {
+    overflow-x: hidden;
   }
   .me-images {
     overflow: hidden;
@@ -312,6 +361,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     display: flex;
     align-items: center;
   }
+
   .hero__phrase {
     font-size: var(--font-size-sub-tittle);
     text-align: right;
@@ -324,7 +374,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   .right-side__button-container {
     opacity: 0;
   }
-  .hero .right-side__buttons-container {
+  .right-side__buttons-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -374,5 +424,49 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     y: -10;
     scale: 4;
     opacity: 0;
+  }
+  @media (min-width: 768px) {
+    .mobile {
+      display: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .hero {
+      flex-direction: column-reverse;
+      overflow: hidden;
+      width: 100%;
+      gap: 0px;
+      justify-content: center;
+    }
+    .hero__greeting:not(.mobile) {
+      display: none;
+    }
+    .hero__greeting.mobile {
+      display: flex;
+      font-size: var(--font-size-tittle);
+      align-items: center;
+      margin: 0px;
+      gap: 0px;
+    }
+    .hero__greeting.mobile p {
+      transform: translateX(-26.095px);
+    }
+    .hero__right-side {
+      width: 60%;
+      flex: 0;
+    }
+    .right-side__buttons-container {
+      display: flex;
+    }
+    .right-side__buttons-container:not(.mobile) {
+      display: none !important;
+    }
+    .hero__phrase {
+      text-align: center;
+    }
+    .hero__left-side {
+      flex: 0;
+      gap: 15px;
+    }
   }
 </style>
