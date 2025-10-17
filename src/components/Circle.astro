@@ -21,11 +21,17 @@ const { color } = Astro.props;
       opacity: 1;
     }
     50% {
-      transform: scale(1.15);
+      transform: scale(1.2);
     }
     100% {
       transform: scale(1);
       opacity: 1;
+    }
+  }
+  @media (max-width: 760px) {
+    .circle {
+      width: 60vw;
+      height: 60vw;
     }
   }
 </style>
