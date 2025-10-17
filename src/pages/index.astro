@@ -191,6 +191,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         .set(emoji, {
           top: "50%",
           left: "50%",
+          transform: "translate(50%, 50%) scale(4)",
           position: "absolute",
           transformOrigin: "bottom right",
         })
@@ -207,10 +208,11 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         .to(emoji, {
           top: "auto",
           left: "auto",
+          x: isMobile ? 98.295 : 98.5,
+          transform: "translate(0%, 0%)",
           scale: 1,
           duration: 0.5,
           delay: 0.5,
-          x: isMobile ? 98.295 : 98.5,
         })
         .to(".black-screen", {
           zIndex: -1,
@@ -471,6 +473,9 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     .hero__left-side {
       flex: 0;
       gap: 15px;
+    }
+    .me-images {
+      overflow: visible;
     }
   }
 </style>
