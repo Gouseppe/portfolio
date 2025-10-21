@@ -3,9 +3,6 @@ import Circle from "./Circle.astro";
 ---
 
 <div class="main">
-  <div class="circle-container">
-    <Circle color="rgba(128, 0, 128, 0.27)" />
-  </div>
   <div>Bienvenido a mi portafolio, proximamente habran avances...</div>
 </div>
 <!-- <Welcome /> -->
@@ -19,13 +16,7 @@ import Circle from "./Circle.astro";
   * {
     color: white;
   }
-  .circle-container {
-    z-index: -1;
-    position: absolute;
-    flex-shrink: 0;
-    width: 544px;
-    height: 520px;
-  }
+
   .main {
     position: relative;
     z-index: 1;
@@ -38,7 +29,7 @@ import Circle from "./Circle.astro";
     text-align: center;
     padding: 0 1rem;
     box-sizing: border-box;
-    background-color: #05010d;
+
     overflow: hidden;
   }
 </style>
