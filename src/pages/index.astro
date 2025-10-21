@@ -1,10 +1,11 @@
 ---
+//astro components
 import Layout from "../layouts/Layout.astro";
 import Circle from "../components/Circle.astro";
 import Button from "../components/Button.astro";
 import CommingSoon from "../components/CommingSoon.astro";
-import { Image } from "astro:assets";
 //images
+import { Image } from "astro:assets";
 import presentationImage from "../assets/presentation-image.webp";
 import meWaving from "../assets/me-waving.webp";
 import mePlaying from "../assets/me-playing.webp";
@@ -28,11 +29,11 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 
   <div class="black-screen"></div>
   <main>
+    <div class="circle-container">
+      <!-- <div class="circle"></div> -->
+      <Circle color="#385eb259" />
+    </div>
     <section class="section hero">
-      <div class="purple-circle-container">
-        <Circle color="#D9D9D952" />
-      </div>
-
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -148,6 +149,47 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 </Layout>
 <script>
   import { gsap } from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  // Register the ScrollTrigger plugin
+  gsap.registerPlugin(ScrollTrigger);
+
+  const circleContainer = document.querySelector(
+    ".circle-container"
+  ) as HTMLElement;
+  const normalDistance =
+    window.innerWidth / 2 - circleContainer.clientWidth / 2;
+  const maxDistance = 650 - circleContainer.clientWidth / 2;
+  gsap.set(circleContainer, {
+    x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
+  });
+  const clientHeight = window.innerHeight;
+  const circleTL = gsap.timeline({
+    scrollTrigger: {
+      scrub: 1,
+      pin: true,
+      trigger: circleContainer,
+      start: "top top",
+      end: `+=${clientHeight}`,
+    },
+  });
+
+  circleTL.to(
+    circleContainer,
+    {
+      rotateZ: 450,
+      x: 0,
+      y: window.innerHeight / 2 - circleContainer.clientHeight / 2,
+    },
+    0
+  );
+
+  circleTL.to(
+    ".circle",
+    {
+      backgroundColor: "rgba(128, 0, 128, 0.50)",
+    },
+    0
+  );
 
   let isAnimating = false; // Variable para controlar el estado de la animación
   let mm = gsap.matchMedia();
@@ -219,6 +261,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
           autoAlpha: 0,
           duration: 0.5,
         })
+        .set("body", { overflowY: "auto" })
         .fromTo(
           ".right-side__button-container",
           {
@@ -236,9 +279,9 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     }
   );
 
-  const meImagesTimeline = gsap.timeline({ repeat: -1, delay: 3 });
+  const meImagesTl = gsap.timeline({ repeat: -1, delay: 3 });
 
-  meImagesTimeline
+  meImagesTl
     .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
     .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
     // Animación de balanceo
@@ -257,7 +300,6 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
       { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
       0.7
     )
-
     // Segunda imagen: .me-playing
     .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
     .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
@@ -286,9 +328,13 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   }
   body {
     overflow-x: hidden;
+    overflow-y: hidden;
   }
   main {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .me-images {
     overflow: hidden;
@@ -297,26 +343,12 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     position: absolute;
     opacity: 0;
   }
-  .purple-circle-container {
+  .circle-container {
     position: absolute;
-    top: -200px;
-    left: -200px;
     z-index: 0;
   }
-  .circle {
-    z-index: -1;
-    position: absolute;
-
-    width: 544px;
-    height: 520px;
-    flex-shrink: 0;
-    border-radius: 544px;
-    background: rgba(128, 0, 128, 0.27);
-    filter: blur(150.25px);
-    animation: pulse 3s infinite;
-  }
   .section {
-    margin: 0 auto;
+    width: 100%;
     max-width: 1300px;
     /* position: relative;
     z-index: 1; */
@@ -329,16 +361,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     box-sizing: border-box;
     padding: 10px;
   }
-  /* .auxiliar-container {
-    position: absolute;
-    max-width: 1300px;
-    margin: 0 auto;
-    height: 100vh;
 
-    width: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-  } */
   .hero {
     flex-direction: row;
     position: relative;
