@@ -5,16 +5,15 @@ const { color } = Astro.props;
 <div style={`--color: ${color};`} class="circle"></div>
 <style>
   .circle {
-    z-index: -1;
-    position: absolute;
-    width: 544px;
+    width: 520px;
     height: 520px;
     flex-shrink: 0;
     border-radius: 544px;
     background: var(--color);
-    filter: blur(150.25px);
+    filter: blur(100.25px);
     animation: pulse 3s infinite;
   }
+
   @keyframes pulse {
     0% {
       transform: scale(1);
@@ -28,10 +27,12 @@ const { color } = Astro.props;
       opacity: 1;
     }
   }
+
   @media (max-width: 760px) {
     .circle {
       width: 60vw;
       height: 60vw;
+      filter: blur(60.25px);
     }
   }
 </style>
