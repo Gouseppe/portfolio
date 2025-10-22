@@ -15,23 +15,13 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 ---
 
 <Layout tittle="">
-  <!-- SVG para el clip-path (invisible) -->
-
-  <!-- <svg width="0" height="0" viewBox="0 0 100 100" class="hidden">
-    <defs>
-      <clipPath id="customShape" clipPathUnits="objectBoundingBox">
-        <path
-          d="M0.05,0.10 L 0.35,0.10 A0.05,0.05 0,0,0 0.40,0.05 L0.40,0.05 A0.05,0.05 0,0,1 0.45,0 L 0.94,0 A0.05,0.05 0,0,1 1,0.05 L 1,0.95 A0.05,0.05 0,0,1 0.94,1 L0.05,1 A0.05,0.05 0,0,1 0,0.95 L 0,0.15 A0.05,0.05 0,0,1 0.05,0.10 Z"
-        ></path>
-      </clipPath>
-    </defs>
-  </svg> -->
-
   <div class="black-screen"></div>
   <main>
-    <div class="circle-container">
-      <!-- <div class="circle"></div> -->
-      <Circle color="#385eb259" />
+    <div class="circle-container-wrapper">
+      <div class="circle-container">
+        <!-- <div class="circle"></div> -->
+        <Circle color="#385eb259" />
+      </div>
     </div>
     <section class="section hero">
       <div class="hero__left-side">
@@ -144,7 +134,9 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         <span class="emoji mobile">👋</span>
       </div>
     </section>
-    <CommingSoon />
+    <section>
+      <CommingSoon />
+    </section>
   </main>
 </Layout>
 <script>
@@ -153,36 +145,41 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   // Register the ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
 
+  const getVH = () =>
+    window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
   const circleContainer = document.querySelector(
     ".circle-container"
   ) as HTMLElement;
+  gsap.set(".circle-container-wrapper", {
+    height: circleContainer.clientHeight + "px",
+    width: circleContainer.clientWidth + "px",
+  });
   const normalDistance =
     window.innerWidth / 2 - circleContainer.clientWidth / 2;
   const maxDistance = 650 - circleContainer.clientWidth / 2;
   gsap.set(circleContainer, {
     x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
   });
-  const clientHeight = window.innerHeight;
+
   const circleTL = gsap.timeline({
     scrollTrigger: {
+      trigger: ".circle-container-wrapper",
+      start: "top top",
+      end: () => `+=${getVH()}`, // 👈 dinámico
       scrub: 1,
       pin: true,
-      trigger: circleContainer,
-      start: "top top",
-      end: `+=${clientHeight}`,
     },
   });
-
   circleTL.to(
     circleContainer,
     {
       rotateZ: 450,
       x: 0,
-      y: window.innerHeight / 2 - circleContainer.clientHeight / 2,
+      y: () => getVH() / 2 - circleContainer.clientHeight / 2,
     },
     0
   );
-
   circleTL.to(
     ".circle",
     {
@@ -343,13 +340,17 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     position: absolute;
     opacity: 0;
   }
+
+  .circle-container-wrapper,
   .circle-container {
     position: absolute;
     z-index: 0;
   }
+
   .section {
     width: 100%;
     max-width: 1300px;
+
     /* position: relative;
     z-index: 1; */
     display: flex;
