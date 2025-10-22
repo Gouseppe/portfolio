@@ -20,7 +20,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     <div class="circle-container-wrapper">
       <div class="circle-container">
         <!-- <div class="circle"></div> -->
-        <Circle color="#385eb259" />
+        <Circle colorPC="#1a5ae959" colorMobile="#1a5ae98a" />
       </div>
     </div>
     <section class="section hero">
@@ -155,12 +155,8 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     height: circleContainer.clientHeight + "px",
     width: circleContainer.clientWidth + "px",
   });
-  const normalDistance =
-    window.innerWidth / 2 - circleContainer.clientWidth / 2;
-  const maxDistance = 650 - circleContainer.clientWidth / 2;
-  gsap.set(circleContainer, {
-    x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
-  });
+  const normalDistance = window.innerWidth / 2 - 150;
+  const maxDistance = 650 - 150;
 
   const circleTL = gsap.timeline({
     scrollTrigger: {
@@ -201,6 +197,11 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         ? (document.querySelector(".emoji.mobile") as HTMLElement)
         : (document.querySelector(".emoji") as HTMLElement);
 
+      if (isDesktop) {
+        gsap.set(circleContainer, {
+          x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
+        });
+      }
       const initialAnimation = gsap.timeline({
         defaults: { ease: "power1.inOut" },
         onComplete: () => {
