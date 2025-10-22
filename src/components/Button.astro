@@ -2,29 +2,31 @@
 let { iconPosition, text, link, ariaLabel } = Astro.props;
 ---
 
-<a class="button" href={link} target="_blank" aria-label={ariaLabel}>
-  {
-    iconPosition === "left" ? (
-      <div class="icon">
-        <slot />
-      </div>
-    ) : null
-  }
-  {text && <span>{text}</span>}
-  {
-    iconPosition === "right" ? (
-      <div class="icon">
-        <slot />
-      </div>
-    ) : null
-  }
-</a>
+<div class="button-wrapper">
+  <a class="button" href={link} target="_blank" aria-label={ariaLabel}>
+    {
+      iconPosition === "left" ? (
+        <div class="icon">
+          <slot />
+        </div>
+      ) : null
+    }
+    {text && <span>{text}</span>}
+    {
+      iconPosition === "right" ? (
+        <div class="icon">
+          <slot />
+        </div>
+      ) : null
+    }
+  </a>
+</div>
 
 <style>
   .button {
     display: flex;
-    width: 79px;
-    height: 79px;
+    width: 76px;
+    height: 76px;
     padding: 25px;
     justify-content: center;
     align-items: center;
@@ -32,16 +34,39 @@ let { iconPosition, text, link, ariaLabel } = Astro.props;
     border-radius: 12px;
     background: #151515;
     border: none;
-
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
     /* botones */
-    box-shadow: 0 3px 11px var(--spread, 5px) #385eb259;
+
+    /* box-shadow: 0 3px 11px var(--spread, 5px) #385eb259; */
     transition: box-shadow 0.3s ease-in-out;
+  }
+  .button-wrapper {
+    padding: 3px;
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+    background-color: #385eb259;
+    border-radius: 12px;
+    transition: background-color 0.3s ease-in-out;
   }
   .icon {
     transition: transform 0.3s ease-in-out;
   }
-  .button:hover {
-    box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35);
+  .button-wrapper:has(.button:hover) {
+    /* box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35); */
+    background-color: #385fb2b0;
   }
   .button:hover .icon {
     transform: scale(1.1);
