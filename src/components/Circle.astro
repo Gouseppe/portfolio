@@ -1,15 +1,19 @@
 ---
-const { color } = Astro.props;
+const { colorPC, colorMobile } = Astro.props;
 ---
 
-<div style={`--color: ${color};`} class="circle"></div>
+<div
+  style={`--colorPC: ${colorPC}; --colorMobile: ${colorMobile};`}
+  class="circle"
+>
+</div>
 <style>
   .circle {
     width: 520px;
     height: 520px;
     flex-shrink: 0;
     border-radius: 544px;
-    background: var(--color);
+    background-color: var(--colorPC);
     filter: blur(100.25px);
     animation: pulse 3s infinite;
   }
@@ -33,6 +37,7 @@ const { color } = Astro.props;
       width: 60vw;
       height: 60vw;
       filter: blur(60.25px);
+      background-color: var(--colorMobile);
     }
   }
 </style>
