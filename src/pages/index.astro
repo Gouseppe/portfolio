@@ -3,7 +3,8 @@
 import Layout from "../layouts/Layout.astro";
 import Circle from "../components/Circle.astro";
 import Button from "../components/Button.astro";
-import CommingSoon from "../components/CommingSoon.astro";
+import CommingSoon from "../sections/CommingSoon.astro";
+import AboutMe from "../sections/AboutMe.astro";
 //images
 import { Image } from "astro:assets";
 import presentationImage from "../assets/presentation-image.webp";
@@ -14,16 +15,16 @@ import meCoding from "../assets/me-coding.webp";
 import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 ---
 
-<Layout tittle="">
+<Layout title="">
   <div class="black-screen"></div>
   <main>
-    <div class="circle-container-wrapper">
+    <div class="section fixed circle-layer">
       <div class="circle-container">
         <!-- <div class="circle"></div> -->
         <Circle colorPC="#1a5ae959" colorMobile="#1a5ae98a" />
       </div>
     </div>
-    <section class="section hero">
+    <section class="section hero section-1">
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -134,7 +135,10 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         <span class="emoji mobile">👋</span>
       </div>
     </section>
-    <section>
+    <section class="section-2">
+      <AboutMe />
+    </section>
+    <section class="section-3">
       <CommingSoon />
     </section>
   </main>
@@ -149,40 +153,54 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     window.visualViewport ? window.visualViewport.height : window.innerHeight;
 
   const circleContainer = document.querySelector(
-    ".circle-container"
+    ".circle-container",
   ) as HTMLElement;
-  gsap.set(".circle-container-wrapper", {
-    height: circleContainer.clientHeight + "px",
-    width: circleContainer.clientWidth + "px",
-  });
+
+  const circleLayer = document.querySelector(".circle-layer") as HTMLElement;
+
   const normalDistance = window.innerWidth / 2 - 150;
   const maxDistance = 650 - 150;
 
-  const circleTL = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".circle-container-wrapper",
-      start: "top top",
-      end: () => `+=${getVH()}`, // 👈 dinámico
-      scrub: 1,
-      pin: true,
-    },
-  });
-  circleTL.to(
-    circleContainer,
-    {
-      rotateZ: 450,
-      x: 0,
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: ".section-2",
+        start: "top bottom",
+        end: `top top`, // dinámico
+        scrub: 1,
+      },
+    })
+    .to(circleContainer, {
+      // rotateZ: 450,
+      x: () => circleLayer.clientWidth / 2 - circleContainer.clientWidth / 2, // elemento centrado en torno al componente circle-layer
       y: () => getVH() / 2 - circleContainer.clientHeight / 2,
-    },
-    0
-  );
-  circleTL.to(
-    ".circle",
-    {
+      ease: "none",
+    })
+    .to(".circle", {
       backgroundColor: "rgba(128, 0, 128, 0.50)",
-    },
-    0
-  );
+    });
+
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: ".section-3",
+        start: "top bottom",
+        end: `top top`, // dinámico
+        scrub: 1,
+      },
+    })
+    .to(circleContainer, {
+      // rotateZ: 450,
+      // quiero a x en el final de lado derecho
+      // x: () => "+=100%",
+      x: 0,
+
+      y: () => getVH() - circleContainer.clientHeight,
+      ease: "none",
+    })
+    .to(".circle", {
+      backgroundColor: "rgba(230, 230, 85, 0.26)",
+    });
 
   let isAnimating = false; // Variable para controlar el estado de la animación
   let mm = gsap.matchMedia();
@@ -198,11 +216,12 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         : (document.querySelector(".emoji") as HTMLElement);
 
       if (isDesktop) {
-        gsap.set(circleContainer, {
-          x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
-        });
+        // gsap.set(circleContainer, {
+        //   x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
+        // });
       }
       const initialAnimation = gsap.timeline({
+        paused: true,
         defaults: { ease: "power1.inOut" },
         onComplete: () => {
           // Aquí agregas el listener solo cuando termina toda la animación inicial
@@ -272,9 +291,15 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
             y: 0,
             opacity: 1,
             ease: "sine.out",
-          }
+          },
         );
-    }
+      // Ejecutar la animación inicial una vez que la página haya cargado completamente
+      if (typeof window !== "undefined") {
+        window.addEventListener("load", () => {
+          initialAnimation.play();
+        });
+      }
+    },
   );
 
   const meImagesTl = gsap.timeline({ repeat: -1, delay: 3 });
@@ -286,17 +311,17 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     .to(
       ".me-waving",
       { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
-      0.1
+      0.1,
     )
     .to(
       ".me-waving",
       { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
-      0.4
+      0.4,
     )
     .to(
       ".me-waving",
       { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
-      0.7
+      0.7,
     )
     // Segunda imagen: .me-playing
     .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
@@ -321,6 +346,12 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 	--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
   } */
 
+  .fixed {
+    position: fixed;
+    top: 0px;
+    z-index: -1;
+  }
+
   * {
     color: white;
   }
@@ -342,16 +373,17 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     opacity: 0;
   }
 
-  .circle-container-wrapper,
   .circle-container {
     position: absolute;
+    top: 0px;
+    left: 0px;
     z-index: 0;
   }
 
   .section {
     width: 100%;
     max-width: 1300px;
-
+    flex-shrink: 0;
     /* position: relative;
     z-index: 1; */
     display: flex;
@@ -360,7 +392,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     font-family: system-ui, sans-serif;
     font-size: 1.5rem;
     text-align: center;
-    box-sizing: border-box;
+
     padding: 10px;
   }
 
@@ -383,7 +415,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   .hero__greeting {
     display: flex;
     width: 100%;
-    font-size: var(--font-size-tittle);
+    font-size: var(--font-title);
     flex-direction: column;
     text-align: left;
     margin-left: 2rem;
@@ -394,7 +426,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
   }
 
   .hero__phrase {
-    font-size: var(--font-size-sub-tittle);
+    font-size: var(--font-subtitle);
     text-align: right;
   }
 
@@ -474,7 +506,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     }
     .hero__greeting.mobile {
       display: flex;
-      font-size: var(--font-size-tittle);
+      font-size: var(--font-title);
       align-items: center;
       margin: 0px;
       gap: 0px;
