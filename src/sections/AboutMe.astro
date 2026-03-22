@@ -1,0 +1,226 @@
+---
+import Badge from "../components/Badge.astro";
+//icons
+import { Contact } from "@lucide/astro";
+//images
+import school from "../assets/school.png";
+import laptop from "../assets/laptop.png";
+//svg's
+import react from "./../assets/CibReact 1.svg";
+import laravel from "./../assets/Fa6BrandsLaravel 1.svg";
+import astro from "./../assets/SimpleIconsAstro 1.svg";
+import figma from "./../assets/FaBrandsFigma 1.svg";
+import nestjs from "./../assets/SimpleIconsNestjs 1.svg";
+import typescript from "./../assets/FileIconsTypescript 1.svg";
+
+const svgs = [react, laravel, astro, figma, nestjs, typescript];
+---
+
+<section class="section">
+  <div class="title-wrapper">
+    <Contact size={"2.5rem"} />
+    <h2 class="title">Sobre mi</h2>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="content-wrapper__column">
+      <div class="floating">
+        <img
+          src={school.src}
+          alt="illustration frontend"
+          class="float-image uno"
+        />
+
+        <p>
+          Soy un desarrollador apasionado por crear experiencias digitales que
+          combinen funcionalidad y estética.
+        </p>
+        <p>
+          Mi Viaje en el mundo de la programación comenzó en la universidad y
+          desde entonces no he dejado de aprender y evolucionar en este
+          fascinante campo.
+        </p>
+      </div>
+
+      <h3 class="sub-title">Desarrollo Frontend</h3>
+      <div class="floating">
+        <img
+          src={laptop.src}
+          alt="illustration frontend"
+          class="float-image dos"
+        />
+        <p>
+          Mi verdadera pasión reside en el frontend, donde encuentro el
+          equilibrio perfecto entre diseño atractivo y experiencia de usuario
+          intuitiva. Me especializo en crear interfaces que no solo son
+          visualmente impactantes y únicas, sino también funcionales y cómodas
+          para los usuarios. Utilizo estructuras reconocibles combinadas con
+          elementos innovadores para garantizar una navegación fluida y
+          agradable.
+        </p>
+        <p>
+          funcionales y cómodas para los usuarios. Utilizo estructuras
+          reconocibles combinadas con elementos innovadores para garantizar una
+          navegación fluida y agradable.
+        </p>
+      </div>
+    </div>
+    <div class="content-wrapper__column">
+      <h3 class="sub-title">Desarrollo Backend</h3>
+      <p>
+        Aunque mi especialidad es el frontend, he desarrollado sólidas
+        competencias en el backend que me permiten crear aplicaciones completas
+        y funcionales. Tengo experiencia en la creación de APIs RESTful,
+        implementación de conexiones a bases de datos y desarrollo de
+        operaciones CRUD robustas y seguras.
+      </p>
+      <p>
+        Cuando no estoy programando, disfruto de los videojuegos y el anime, que
+        no solo son mis hobbies sino también fuentes de inspiración creativa.
+        Creo firmemente en el aprendizaje continuo y me mantengo constantemente
+        actualizado con las últimas tendencias y tecnologías en desarrollo web.
+      </p>
+      <h3 class="sub-title">Skills</h3>
+      <div class="badge-list">
+        {
+          svgs.map((svg) => (
+            <div class="badge-item">
+              <Badge size="60px" ariaLabel="Tech Badge">
+                <img src={svg.src} alt="" />
+              </Badge>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  import gsap from "gsap";
+
+  // Usamos una función para encapsular el scope
+  function initAnimations() {
+    const containers = document.querySelectorAll(".badge-list");
+
+    containers.forEach((container) => {
+      const items = container.querySelectorAll(".badge-item");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            gsap.fromTo(
+              items,
+              { y: 20 },
+              {
+                duration: 0.8,
+                stagger: 0.1,
+                y: 0,
+                opacity: 1,
+                ease: "power2.out", // "power2" suele verse más fluido que "sine"
+                force3D: true, // Mejora el rendimiento usando GPU
+              },
+            );
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.2 },
+      );
+
+      observer.observe(container);
+    });
+  }
+
+  // Ejecutar cuando el DOM esté listo
+  document.addEventListener("DOMContentLoaded", initAnimations);
+</script>
+
+<style>
+  section {
+    z-index: 99;
+  }
+  p {
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+  .section {
+    width: 100%;
+    height: 100vh;
+    max-width: 1300px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    align-items: center;
+    text-align: center;
+    font-size: var(--font-base);
+    font-family: system-ui, sans-serif;
+    gap: 1rem;
+  }
+  .title {
+    font-size: var(--font-title);
+  }
+  .sub-title {
+    font-size: var(--font-subtitle);
+    margin-bottom: 0.6rem;
+  }
+
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .content-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+  }
+  .content-wrapper__column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .badge-list {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .badge-item {
+    opacity: 0; /* Inicialmente ocultos para la animación */
+  }
+  .floating {
+    text-align: left;
+  }
+
+  .float-image.uno {
+    float: right;
+    width: 150px;
+    margin-left: 10px;
+  }
+  .float-image.dos {
+    float: left;
+    width: 150px;
+    margin-right: 10px;
+  }
+
+  .floating::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  @media (max-width: 900px) {
+    .content-wrapper {
+      flex-direction: column;
+    }
+    /* .float-image.uno,
+    .float-image.dos {
+      float: none;
+      display: block;
+      margin: 0 auto 16px auto;
+    } */
+  }
+</style>
