@@ -1,0 +1,51 @@
+---
+const { ariaLabel = "Badge", size = "80px" } = Astro.props;
+---
+
+<div
+  class="badge"
+  role="img"
+  aria-label={ariaLabel}
+  style={`width:${size};height:${size};`}
+>
+  <div class="badge__inner">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .badge {
+    background: #151515;
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: clip;
+    box-shadow: 0 3px 11px rgba(128, 0, 128, 0.5);
+    transition:
+      transform 0.5s ease,
+      box-shadow 0.5s linear;
+  }
+
+  .badge__inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .badge__inner img,
+  .badge__inner svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .badge:hover {
+    transform: translateY(2px);
+    box-shadow: 0 3px 11px rgb(255, 255, 255);
+  }
+</style>
