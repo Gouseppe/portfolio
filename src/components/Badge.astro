@@ -1,12 +1,16 @@
 ---
-const { ariaLabel = "Badge", size = "80px" } = Astro.props;
+const {
+  ariaLabel = "Badge",
+  size = "80px",
+  shadowColor = "rgba(128, 0, 128, 0.5)",
+} = Astro.props;
 ---
 
 <div
   class="badge"
   role="img"
   aria-label={ariaLabel}
-  style={`width:${size};height:${size};`}
+  style={`width:${size};height:${size}; --shadow-color: ${shadowColor};`}
 >
   <div class="badge__inner">
     <slot />
@@ -22,7 +26,7 @@ const { ariaLabel = "Badge", size = "80px" } = Astro.props;
     align-items: center;
     justify-content: center;
     overflow: clip;
-    box-shadow: 0 3px 11px rgba(128, 0, 128, 0.5);
+    box-shadow: 0 3px 11px var(--shadow-color);
     transition:
       transform 0.5s ease,
       box-shadow 0.5s linear;

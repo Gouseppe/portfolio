@@ -13,6 +13,7 @@ import mePlaying from "../assets/me-playing.webp";
 import meCoding from "../assets/me-coding.webp";
 //lucide icons
 import { Mail, Linkedin, Github, Download } from "@lucide/astro";
+import Projects from "../sections/Projects.astro";
 ---
 
 <Layout title="">
@@ -24,7 +25,7 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         <Circle colorPC="#1a5ae959" colorMobile="#1a5ae98a" />
       </div>
     </div>
-    <section class="section hero section-1">
+    <div class="section hero section-1">
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -134,13 +135,16 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
         <p>Bienvenido!</p>
         <span class="emoji mobile">👋</span>
       </div>
-    </section>
-    <section class="section-2">
+    </div>
+    <div class="section-2">
       <AboutMe />
-    </section>
-    <section class="section-3">
+    </div>
+    <div class="section-3">
+      <Projects />
+    </div>
+    <div class="section-4">
       <CommingSoon />
-    </section>
+    </div>
   </main>
 </Layout>
 <script>
@@ -293,11 +297,10 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
             ease: "sine.out",
           },
         );
+
       // Ejecutar la animación inicial una vez que la página haya cargado completamente
       if (typeof window !== "undefined") {
-        window.addEventListener("load", () => {
-          initialAnimation.play();
-        });
+        initialAnimation.play();
       }
     },
   );
@@ -378,6 +381,14 @@ import { Mail, Linkedin, Github, Download } from "@lucide/astro";
     top: 0px;
     left: 0px;
     z-index: 0;
+  }
+  .section-1,
+  .section-2,
+  .section-3,
+  .section-4 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .section {

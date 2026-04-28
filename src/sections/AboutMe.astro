@@ -100,34 +100,31 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
 
   // Usamos una función para encapsular el scope
   function initAnimations() {
-    const containers = document.querySelectorAll(".badge-list");
+    const container = document.querySelector(".badge-list") as HTMLDivElement;
 
-    containers.forEach((container) => {
-      const items = container.querySelectorAll(".badge-item");
+    const items = container.querySelectorAll(".badge-item");
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            gsap.fromTo(
-              items,
-              { y: 20 },
-              {
-                duration: 0.8,
-                stagger: 0.1,
-                y: 0,
-                opacity: 1,
-                ease: "power2.out", // "power2" suele verse más fluido que "sine"
-                force3D: true, // Mejora el rendimiento usando GPU
-              },
-            );
-            observer.disconnect();
-          }
+    // 2. Usamos gsap.fromTo directamente y le añadimos el objeto scrollTrigger
+    gsap.fromTo(
+      items,
+      {
+        y: 20,
+        opacity: 0, // Añadido al estado inicial para evitar parpadeos antes del scroll
+      },
+      {
+        duration: 0.8,
+        stagger: 0.1,
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+        force3D: true,
+        scrollTrigger: {
+          trigger: container, // El elemento que vigilamos
+          start: "top 80%", // Equivale a tu threshold: 0.2
+          once: true, // Equivale a tu observer.disconnect()
         },
-        { threshold: 0.2 },
-      );
-
-      observer.observe(container);
-    });
+      },
+    );
   }
 
   // Ejecutar cuando el DOM esté listo
@@ -144,7 +141,7 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
   }
   .section {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     max-width: 1300px;
     padding: 10px;
     display: flex;
@@ -176,6 +173,7 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
     display: flex;
     flex-direction: row;
     gap: 32px;
+    width: 100%;
   }
   .content-wrapper__column {
     flex: 1;
@@ -186,7 +184,8 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
   .badge-list {
     display: flex;
     gap: 12px;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .badge-item {
     opacity: 0; /* Inicialmente ocultos para la animación */
@@ -199,11 +198,13 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
     float: right;
     width: 150px;
     margin-left: 10px;
+    shape-outside: circle(50% at 50% 50%);
   }
   .float-image.dos {
     float: left;
     width: 150px;
     margin-right: 10px;
+    shape-outside: circle(50% at 50% 50%);
   }
 
   .floating::after {

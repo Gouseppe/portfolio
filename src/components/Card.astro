@@ -1,0 +1,507 @@
+---
+import Badge from "./Badge.astro";
+// lucide's icons
+import { View, CircleX, Binoculars } from "@lucide/astro";
+
+interface Props {
+  title: string;
+  description: string;
+  badgeimages: { src: string }[];
+  img?: { src: string };
+  badgeShadowColor?: string;
+  imgSlides: { src: string }[];
+}
+
+const {
+  title,
+  description,
+  img,
+  badgeimages,
+  badgeShadowColor,
+  imgSlides = [],
+} = Astro.props;
+---
+
+<astro-card>
+  <div class="card">
+    <div class="card__image">
+      <img src={img?.src} alt={title} />
+      <button class="card__view-button"><View width={"100%"} /></button>
+    </div>
+    <div class="resume">
+      <h3>{title}</h3>
+      <div class="badge-list">
+        {
+          badgeimages.map((images) => (
+            <Badge
+              size="30px"
+              ariaLabel="Tech Badge"
+              shadowColor={badgeShadowColor}
+            >
+              <img src={images.src} alt="" />
+            </Badge>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <!-- Dialog -->
+  <dialog id="dialog">
+    <div class="dialog-content">
+      <div class="dialog-backgrounds">
+        {
+          imgSlides.map((slide, index) => (
+            <img
+              class={`bg-layer ${index === imgSlides.length - 1 ? "active" : ""}`}
+              src={slide.src}
+              alt=""
+            />
+          ))
+        }
+      </div>
+      <div class="dialog-content__info-wrapper visible">
+        <h2 class="dialog-content__title">{title}</h2>
+        <p class="dialog-content__description">{description}</p>
+      </div>
+      <button class="cancel-button visible"
+        ><CircleX width="24" height="24" /></button
+      >
+      <button class="only-background-button">
+        <Binoculars width="24" height="24" /></button
+      >
+      <div
+        class="dialog-content__slides-container visible"
+        style=`--count: ${imgSlides.length}`
+      >
+        <div
+          class="dialog-content__slides"
+          data-slides-count={imgSlides.length}
+        >
+          {
+            imgSlides.map((slide) => (
+              <img
+                class="dialog-content__slides__image"
+                src={slide.src}
+                alt=""
+              />
+            ))
+          }
+          {
+            imgSlides.map((slide) => (
+              <img
+                class="dialog-content__slides__image"
+                src={slide.src}
+                alt=""
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </dialog>
+</astro-card>
+<script>
+  // Configuramos el carrusel para que dé un paso cada 2 segundos
+
+  function initCarousel(
+    dialogContent_slides: HTMLDivElement,
+    dialogContent: HTMLDivElement,
+    cards: HTMLCollectionOf<HTMLDivElement>,
+    slidesCount: number,
+  ) {
+    let interval: NodeJS.Timeout | null = null;
+    let currentIndex = 0;
+
+    // Función dinámica para calcular la distancia (Card + Gap)
+    const getStride = () => {
+      if (slidesCount === 0) return 0;
+      const firstCard = cards[0];
+      const gap =
+        parseInt(window.getComputedStyle(dialogContent_slides).gap) || 0;
+      return firstCard.offsetWidth + gap;
+    };
+
+    function start() {
+      console.log("Starting Carousel...");
+      interval = setInterval(() => {
+        // validar si tiene la clase last, si la tiene, quitarla
+        if (dialogContent_slides.classList.contains("last")) {
+          dialogContent_slides.classList.remove("last");
+        }
+        currentIndex++; // Pasamos a la siguiente tarjeta
+
+        // Si llegamos a la última tarjeta, reiniciamos el contador a 0
+        if (currentIndex > slidesCount) {
+          console.log("Reiniciando Carousel...");
+          currentIndex = 1;
+        }
+
+        // Calculamos cuánto debemos mover el contenedor
+        const stride = getStride();
+        const moveDistance = -(currentIndex * stride);
+
+        // Calculamos el índice real de la imagen que debería mostrarse
+        const targetIndex = (currentIndex + slidesCount - 1) % slidesCount;
+
+        // Seleccionamos todos los fondos
+        const backgrounds = dialogContent.querySelectorAll(".bg-layer");
+
+        // Removemos 'active' de todos y se lo ponemos al correcto
+        backgrounds.forEach((bg, i) => {
+          if (i === targetIndex) {
+            bg.classList.add("active");
+          } else {
+            bg.classList.remove("active");
+          }
+        });
+
+        // Aplicamos el movimiento
+        dialogContent_slides.style.transform = `translateX(${moveDistance}px)`;
+        if (currentIndex === slidesCount) {
+          setTimeout(() => {
+            dialogContent_slides.classList.add("last");
+            // ahora me muevo a la primera tarjeta, pero sin animación, para que no se note el salto
+            dialogContent_slides.style.transform = `translateX(0)`;
+          }, 500);
+        }
+      }, 2000); // 2000ms = 1.5s de pausa + 0.5s de transición CSS
+    }
+
+    function stop() {
+      console.log("Stopping Carousel...");
+      if (interval) {
+        clearInterval(interval);
+      }
+    }
+    return { start, stop };
+  }
+
+  class AstroCard extends HTMLElement {
+    connectedCallback() {
+      const dialog = this.querySelector("#dialog") as HTMLDialogElement;
+      const cancelButton = dialog.querySelector(
+        ".cancel-button",
+      ) as HTMLButtonElement;
+      const onlyBackgroundButton = dialog.querySelector(
+        ".only-background-button",
+      ) as HTMLButtonElement;
+      const viewButton = this.querySelector(
+        ".card__view-button",
+      ) as HTMLButtonElement;
+
+      // dialog's elements
+      const dialogContent_slides = this.querySelector(
+        ".dialog-content__slides",
+      ) as HTMLDivElement;
+      const slidesCount = parseInt(
+        dialogContent_slides.dataset.slidesCount || "0",
+      );
+      console.log(slidesCount);
+      const dialogContent = this.querySelector(
+        ".dialog-content",
+      ) as HTMLDivElement;
+      const cards =
+        dialogContent_slides.children as HTMLCollectionOf<HTMLDivElement>; // Detecta automáticamente la cantidad de cards
+
+      const { start, stop } = initCarousel(
+        dialogContent_slides,
+        dialogContent,
+        cards,
+        slidesCount,
+      );
+
+      viewButton.addEventListener("click", () => {
+        dialog.showModal();
+        start();
+      });
+      cancelButton.addEventListener("click", () => {
+        dialog.close();
+        stop();
+      });
+      onlyBackgroundButton.addEventListener("click", () => {
+        dialogContent.classList.toggle("only-background");
+      });
+      onlyBackgroundButton.addEventListener("mouseenter", () => {
+        onlyBackgroundButton.style.animation =
+          "bounceAndRing .5s ease-in-out forwards";
+      });
+      onlyBackgroundButton.addEventListener("mouseleave", () => {
+        onlyBackgroundButton.style.animation =
+          "bounceAndRingReverse .5s ease-in-out forwards";
+      });
+      onlyBackgroundButton.addEventListener("animationend", () => {
+        if (onlyBackgroundButton.style.animation.includes("Reverse")) {
+          onlyBackgroundButton.style.animation = "";
+          onlyBackgroundButton.style.transform = "";
+        }
+      });
+    }
+  }
+  customElements.define("astro-card", AstroCard);
+</script>
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    max-width: 300px;
+    width: 100%;
+    min-width: 300px;
+  }
+  .card__image {
+    max-width: 250px;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    z-index: 10;
+  }
+  .card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .card__view-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    background: transparent;
+    cursor: pointer;
+    border: none;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  .card__image:hover .card__view-button {
+    opacity: 1;
+  }
+  .card__view-button:hover {
+    transform: scale(1.1);
+  }
+  .resume {
+    position: relative;
+    z-index: 1;
+    transform: translateY(-25%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    padding-top: 3rem;
+    background: rgba(0, 0, 0, 0.247);
+    backdrop-filter: blur(2.5px);
+    border-radius: 20px;
+    border: 1px solid rgba(56, 56, 56, 0.3);
+    box-shadow:
+      0 4px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(68, 68, 68, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px -10px rgb(155, 155, 155);
+    overflow: hidden;
+  }
+
+  .resume::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(19, 19, 19, 0.8),
+      transparent,
+      rgba(97, 97, 97, 0.3)
+    );
+  }
+  .badge-list {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  #dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  #dialog {
+    border: none;
+    border-radius: 8px;
+    max-width: 80%;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    padding: 0px;
+  }
+
+  /* modal */
+
+  .dialog-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+    transition: background 0.5s ease;
+  }
+
+  .dialog-content__slides-container {
+    box-sizing: content-box;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding-bottom: 12px;
+    padding-right: 12px;
+    padding-top: 12px;
+    width: calc(var(--count) * 70px + (var(--count) - 1) * 12px);
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(0, 0, 0, 0.815) 5%,
+      rgb(0, 0, 0) 10%,
+
+      /* El contenido empieza a ser 100% visible al 10% del ancho */ black 90%,
+      rgba(0, 0, 0, 0.815) 95%,
+      /* Se mantiene visible hasta el 90% */ transparent
+    );
+  }
+  .dialog-content__slides {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .dialog-content__slides.last {
+    transition: none !important;
+  }
+  .dialog-content__slides__image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 5px 9px 5px rgba(0, 0, 0, 0.5);
+  }
+  .only-background-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+  }
+  @keyframes bounceAndRing {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    25% {
+      transform: rotate(15deg) scale(1.1);
+    }
+    50% {
+      transform: rotate(0deg) scale(1.2);
+    }
+    75% {
+      transform: rotate(-15deg) scale(1.2);
+    }
+    100% {
+      transform: rotate(0deg) scale(1.2);
+    }
+  }
+  @keyframes bounceAndRingReverse {
+    0% {
+      transform: rotate(0deg) scale(1.2);
+    }
+    25% {
+      transform: rotate(-15deg) scale(1.1);
+    }
+    50% {
+      transform: rotate(0deg) scale(1);
+    }
+    75% {
+      transform: rotate(15deg) scale(1);
+    }
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+  }
+  .cancel-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    color: white;
+  }
+  .cancel-button:hover {
+    transform: scale(1.1) rotate(90deg) translateY(1px) translateX(-1px);
+  }
+  .cancel-button:focus-visible {
+    outline: none;
+  }
+  .dialog-content__info-wrapper {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 60%;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+  }
+  .dialog-content__info-wrapper,
+  .dialog-content__slides-container {
+    transition: opacity 0.5s ease;
+  }
+  .dialog-content.only-background .visible {
+    opacity: 0;
+  }
+
+  /* Nuevo CSS para los fondos */
+  .dialog-backgrounds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Lo enviamos al fondo */
+
+    overflow: hidden;
+  }
+
+  .bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0; /* Ocultas por defecto */
+    transition: opacity 0.5s ease-in-out; /* Transición súper suave */
+  }
+
+  .bg-layer.active {
+    opacity: 1; /* Solo la activa se ve */
+  }
+</style>
