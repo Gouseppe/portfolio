@@ -19,6 +19,7 @@
   margin: 0px;
   padding: 0px;
 }
+
 /* html,body{height:100%;margin:0;padding:0} */
 p,body{margin:0;}
 body{
@@ -53,7 +54,7 @@ body{
 }
 
 /* Utility containers used by pages */
-section{width:100%;max-width:1300px;padding:10px;}
+section, .section{width:100%;max-width:1300px;padding:10px;}
 
 /* Buttons, cards and small helpers commonly used in the project */
 /* .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:16px} */
