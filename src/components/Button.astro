@@ -1,24 +1,33 @@
 ---
-let { iconPosition, text, link, ariaLabel } = Astro.props;
+interface Props {
+  iconPosition: "left" | "right";
+  text?: string;
+  link: string;
+  ariaLabel: string;
+  width?: string;
+}
+let { iconPosition, text, link, ariaLabel, width = "76px" } = Astro.props;
 ---
 
-<div class="button-wrapper">
-  <a class="button" href={link} target="_blank" aria-label={ariaLabel}>
-    {
-      iconPosition === "left" ? (
-        <div class="icon">
-          <slot />
-        </div>
-      ) : null
-    }
-    {text && <span>{text}</span>}
-    {
-      iconPosition === "right" ? (
-        <div class="icon">
-          <slot />
-        </div>
-      ) : null
-    }
+<div class="button-wrapper" style={`width: ${width};`}>
+  <a
+    class="button"
+    href={link}
+    target="_blank"
+    aria-label={ariaLabel}
+    style={`width: ${width};`}
+  >
+    <div class="content">
+      {
+        iconPosition === "left" ? (
+          <div class="icon">
+            <slot />
+          </div>
+        ) : null
+      }
+      {text && <span>{text}</span>}
+      {iconPosition === "right" ? <slot /> : null}
+    </div>
   </a>
 </div>
 
@@ -30,7 +39,6 @@ let { iconPosition, text, link, ariaLabel } = Astro.props;
     padding: 25px;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     border-radius: 12px;
     background: #151515;
     border: none;
@@ -48,6 +56,7 @@ let { iconPosition, text, link, ariaLabel } = Astro.props;
     transition: box-shadow 0.3s ease-in-out;
   }
   .button-wrapper {
+    box-sizing: content-box;
     padding: 3px;
     clip-path: polygon(
       10px 0,
@@ -61,15 +70,25 @@ let { iconPosition, text, link, ariaLabel } = Astro.props;
     border-radius: 12px;
     transition: background-color 0.3s ease-in-out;
   }
-  .icon {
+
+  .content {
+    width: fit-content;
     transition: transform 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
   }
+
+  .button:hover .content {
+    transform: scale(1.1);
+  }
+
   .button-wrapper:has(.button:hover) {
     /* box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35); */
     background-color: #385fb2b0;
-  }
-  .button:hover .icon {
-    transform: scale(1.1);
   }
 
   @media (max-width: 760px) {

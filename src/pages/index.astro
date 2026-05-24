@@ -14,6 +14,7 @@ import meCoding from "../assets/me-coding.webp";
 //lucide icons
 import { Mail, Linkedin, Github, Download } from "@lucide/astro";
 import Projects from "../sections/Projects.astro";
+import ContactMe from "../sections/ContactMe.astro";
 ---
 
 <Layout title="">
@@ -144,6 +145,9 @@ import Projects from "../sections/Projects.astro";
     </div>
     <div class="section-4">
       <CommingSoon />
+    </div>
+    <div class="section-5">
+      <ContactMe />
     </div>
   </main>
 </Layout>
@@ -385,7 +389,8 @@ import Projects from "../sections/Projects.astro";
   .section-1,
   .section-2,
   .section-3,
-  .section-4 {
+  .section-4,
+  .section-5 {
     width: 100%;
     display: flex;
     justify-content: center;
