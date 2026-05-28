@@ -1,0 +1,217 @@
+---
+interface Props {
+  iconPosition: "left" | "right";
+  text?: string;
+  link?: string;
+  ariaLabel: string;
+  width?: string;
+  type?: "submit" | "button";
+  form?: string;
+  size?: "small" | "medium" | "large";
+}
+
+let {
+  iconPosition,
+  text,
+  link,
+  ariaLabel,
+  width = "76px",
+  type = "submit",
+  form,
+  size = "medium",
+} = Astro.props;
+---
+
+<div class={`form-button-wrapper size-${size}`} style={`width: ${width};`}>
+  {
+    link ? (
+      <a
+        class={`form-button size-${size}`}
+        href={link}
+        target="_blank"
+        aria-label={ariaLabel}
+        style={`width: ${width};`}
+      >
+        <div class="content">
+          {iconPosition === "left" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
+          {text && <span>{text}</span>}
+          {iconPosition === "right" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
+        </div>
+      </a>
+    ) : (
+      <button
+        class={`form-button size-${size}`}
+        type={type}
+        form={form}
+        aria-label={ariaLabel}
+        style={`width: ${width};`}
+      >
+        <div class="content">
+          {iconPosition === "left" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
+          {text && <span>{text}</span>}
+          {iconPosition === "right" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
+        </div>
+      </button>
+    )
+  }
+</div>
+
+<style>
+  /* Wrapper con los cortes poligonales idénticos y borde metálico */
+  .form-button-wrapper {
+    box-sizing: border-box;
+    padding: 1.5px; /* Borde metálico muy fino */
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+
+    border-radius: 12px;
+    transition:
+      background-color 0.3s ease-in-out,
+      box-shadow 0.3s ease-in-out;
+  }
+
+  /* Botón con fondo translúcido y sombras internas metálicas */
+  .form-button {
+    display: flex;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    background: rgba(
+      0,
+      0,
+      0,
+      0.247
+    ); /* Mismo fondo translúcido que las cards */
+    backdrop-filter: blur(4px);
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+
+    /* Inset shadows idénticos al panel .resume de las cards */
+    box-shadow:
+      inset 0 1px 0 rgba(68, 68, 68, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px -10px rgb(155, 155, 155);
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  /* Control de Altura y Padding por Prop de Size */
+
+  /* 1. Small */
+  .form-button.size-small {
+    height: 56px;
+    padding: 12px 20px;
+  }
+
+  .form-button.size-small .content {
+    font-size: 1.1rem;
+    gap: 8px;
+  }
+
+  /* 2. Medium (Default) */
+  .form-button.size-medium {
+    height: 76px;
+    padding: 25px;
+  }
+
+  .form-button.size-medium .content {
+    font-size: 1.5rem;
+    gap: 10px;
+  }
+
+  /* 3. Large */
+  .form-button.size-large {
+    height: 96px;
+    padding: 30px;
+  }
+
+  .form-button.size-large .content {
+    font-size: 1.8rem;
+    gap: 12px;
+  }
+
+  /* Contenido interno y animación */
+  .content {
+    width: fit-content;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+  }
+
+  /* Hover states */
+  .form-button:hover .content {
+    transform: scale(1.05);
+  }
+
+  .form-button:hover {
+    background: rgba(
+      0,
+      0,
+      0,
+      0.35
+    ); /* Fondo ligeramente más oscuro al pasar el cursor */
+  }
+
+  /* Focus states */
+  .form-button:focus-visible {
+    outline: none;
+  }
+
+  /* Responsivo para móviles */
+  @media (max-width: 760px) {
+    .form-button.size-small {
+      height: 48px;
+      padding: 10px;
+    }
+
+    .form-button.size-medium {
+      height: 69px;
+      padding: 20px;
+    }
+
+    .form-button.size-large {
+      height: 85px;
+      padding: 22px;
+    }
+  }
+</style>
