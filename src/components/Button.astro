@@ -1,15 +1,23 @@
 ---
 interface Props {
   iconPosition: "left" | "right";
+  textSize?: "small" | "medium" | "large";
   text?: string;
   link: string;
   ariaLabel: string;
   width?: string;
 }
-let { iconPosition, text, link, ariaLabel, width = "76px" } = Astro.props;
+let {
+  iconPosition,
+  textSize,
+  text,
+  link,
+  ariaLabel,
+  width = "76px",
+} = Astro.props;
 ---
 
-<div class="button-wrapper" style={`width: ${width};`}>
+<div class="button-wrapper">
   <a
     class="button"
     href={link}
@@ -25,18 +33,35 @@ let { iconPosition, text, link, ariaLabel, width = "76px" } = Astro.props;
           </div>
         ) : null
       }
-      {text && <span>{text}</span>}
+      {text && <span class={textSize || "medium"}>{text}</span>}
       {iconPosition === "right" ? <slot /> : null}
     </div>
   </a>
 </div>
 
 <style>
+  .small {
+    font-size: 1rem;
+  }
+  .medium {
+    font-size: 1.25rem;
+  }
+  .large {
+    font-size: 1.5rem;
+  }
+  .button:has(.small) {
+    padding: 0.5rem;
+  }
+  .button:has(.medium) {
+    padding: 1.5rem;
+  }
+  .button:has(.large) {
+    padding: 2rem;
+  }
   .button {
     display: flex;
     width: 76px;
-    height: 76px;
-    padding: 25px;
+    padding: 1.5rem;
     justify-content: center;
     align-items: center;
     border-radius: 12px;
@@ -56,8 +81,8 @@ let { iconPosition, text, link, ariaLabel, width = "76px" } = Astro.props;
     transition: box-shadow 0.3s ease-in-out;
   }
   .button-wrapper {
-    box-sizing: content-box;
     padding: 3px;
+
     clip-path: polygon(
       10px 0,
       100% 0,
@@ -78,7 +103,6 @@ let { iconPosition, text, link, ariaLabel, width = "76px" } = Astro.props;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    font-size: 1.5rem;
     font-weight: 600;
   }
 
