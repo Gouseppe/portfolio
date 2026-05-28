@@ -14,7 +14,7 @@
   --thumb-color: #151515; /* Color inicial */
 }
 
-*:not(dialog):not(input):not(textarea):not(select) {
+*:not(dialog){
   box-sizing:border-box;
   margin: 0px;
   padding: 0px;
