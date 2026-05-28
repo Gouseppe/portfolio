@@ -1,25 +1,79 @@
 ---
 import Button from "../components/Button.astro";
+import FormButton from "../components/FormButton.astro";
 import { Mail, Linkedin, Github } from "@lucide/astro";
 ---
 
 <section>
   <h2 class="title">Contact Me</h2>
 
-  <!-- SVG clipPath con coordenadas relativas (objectBoundingBox) para ser 100% responsivo -->
+  <!-- SVG clipPaths independientes para cada Breakpoint con anchos calibrados para dar medidas de píxeles fijos -->
   <svg width="0" height="0" style="position: absolute;">
     <defs>
-      <clipPath id="notchShape" clipPathUnits="objectBoundingBox">
+      <!-- Breakpoint 1: Móvil (tarjeta de 340px) -> Muesca de ~60% = exactamente 204px (para botón de 200px) -->
+      <clipPath id="notchMobile" clipPathUnits="objectBoundingBox">
         <path
           d="M 0.08, 0 
              H 0.92 
              C 0.98, 0, 1, 0.02, 1, 0.08 
              V 0.92 
              C 1, 0.98, 0.98, 1, 0.92, 1 
-             H 0.65 
-             C 0.63, 1, 0.62, 0.85, 0.60, 0.85 
-             H 0.40 
-             C 0.38, 0.85, 0.37, 1, 0.35, 1 
+             H 0.83 
+             C 0.82, 1, 0.81, 0.99, 0.81, 0.98 
+             V 0.94 
+             C 0.81, 0.93, 0.80, 0.92, 0.79, 0.92 
+             H 0.21 
+             C 0.20, 0.92, 0.19, 0.93, 0.19, 0.94 
+             V 0.98 
+             C 0.19, 0.99, 0.18, 1, 0.17, 1 
+             H 0.08 
+             C 0.02, 1, 0, 0.98, 0, 0.92 
+             V 0.08 
+             C 0, 0.02, 0.02, 0, 0.08, 0 
+             Z"
+        ></path>
+      </clipPath>
+
+      <!-- Breakpoint 2: Tableta (tarjeta de 400px) -> Muesca de ~56% = exactamente 224px (para botón de 220px) -->
+      <clipPath id="notchTablet" clipPathUnits="objectBoundingBox">
+        <path
+          d="M 0.08, 0 
+             H 0.92 
+             C 0.98, 0, 1, 0.02, 1, 0.08 
+             V 0.92 
+             C 1, 0.98, 0.98, 1, 0.92, 1 
+             H 0.81 
+             C 0.80, 1, 0.79, 0.99, 0.79, 0.98 
+             V 0.945 
+             C 0.79, 0.935, 0.78, 0.925, 0.77, 0.925 
+             H 0.23 
+             C 0.22, 0.925, 0.21, 0.935, 0.21, 0.945 
+             V 0.98 
+             C 0.21, 0.99, 0.20, 1, 0.19, 1 
+             H 0.08 
+             C 0.02, 1, 0, 0.98, 0, 0.92 
+             V 0.08 
+             C 0, 0.02, 0.02, 0, 0.08, 0 
+             Z"
+        ></path>
+      </clipPath>
+
+      <!-- Breakpoint 3: Escritorio (tarjeta de 480px) -> Muesca de ~52% = exactamente 249.6px (para botón de 246px) -->
+      <clipPath id="notchDesktop" clipPathUnits="objectBoundingBox">
+        <path
+          d="M 0.08, 0 
+             H 0.92 
+             C 0.98, 0, 1, 0.02, 1, 0.08 
+             V 0.92 
+             C 1, 0.98, 0.98, 1, 0.92, 1 
+             H 0.79 
+             C 0.78, 1, 0.77, 0.99, 0.77, 0.98 
+             V 0.95 
+             C 0.77, 0.94, 0.76, 0.93, 0.75, 0.93 
+             H 0.25 
+             C 0.24, 0.93, 0.23, 0.94, 0.23, 0.95 
+             V 0.98 
+             C 0.23, 0.99, 0.22, 1, 0.21, 1 
              H 0.08 
              C 0.02, 1, 0, 0.98, 0, 0.92 
              V 0.08 
@@ -31,30 +85,32 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
   </svg>
 
   <div class="form-wrapper">
-    <!-- SVG overlay para dibujar el borde continuo y brillante de forma responsiva -->
+    <!-- SVG overlay para dibujar el borde continuo y brillante para cada uno de los 3 Breakpoints -->
     <svg class="border-overlay" viewBox="0 0 1 1" preserveAspectRatio="none">
+      <!-- Borde de Teléfono -->
       <path
+        class="path-mobile"
         vector-effect="non-scaling-stroke"
-        d="M 0.08, 0 
-           H 0.92 
-           C 0.98, 0, 1, 0.02, 1, 0.08 
-           V 0.92 
-           C 1, 0.98, 0.98, 1, 0.92, 1 
-           H 0.65 
-           C 0.63, 1, 0.62, 0.85, 0.60, 0.85 
-           H 0.40 
-           C 0.38, 0.85, 0.37, 1, 0.35, 1 
-           H 0.08 
-           C 0.02, 1, 0, 0.98, 0, 0.92 
-           V 0.08 
-           C 0, 0.02, 0.02, 0, 0.08, 0 
-           Z"
+        d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.83 C 0.82, 1, 0.81, 0.99, 0.81, 0.98 V 0.94 C 0.81, 0.93, 0.80, 0.92, 0.79, 0.92 H 0.21 C 0.20, 0.92, 0.19, 0.93, 0.19, 0.94 V 0.98 C 0.19, 0.99, 0.18, 1, 0.17, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
+      ></path>
+      <!-- Borde de Tableta -->
+      <path
+        class="path-tablet"
+        vector-effect="non-scaling-stroke"
+        d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.81 C 0.80, 1, 0.79, 0.99, 0.79, 0.98 V 0.945 C 0.79, 0.935, 0.78, 0.925, 0.77, 0.925 H 0.23 C 0.22, 0.925, 0.21, 0.935, 0.21, 0.945 V 0.98 C 0.21, 0.99, 0.20, 1, 0.19, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
+      ></path>
+      <!-- Borde de Escritorio -->
+      <path
+        class="path-desktop"
+        vector-effect="non-scaling-stroke"
+        d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.79 C 0.78, 1, 0.77, 0.99, 0.77, 0.98 V 0.95 C 0.77, 0.94, 0.76, 0.93, 0.75, 0.93 H 0.25 C 0.24, 0.93, 0.23, 0.94, 0.23, 0.95 V 0.98 C 0.23, 0.99, 0.22, 1, 0.21, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
       ></path>
     </svg>
 
-    <form class="contact-form" action="#" method="POST">
+    <form class="contact-form" id="contactForm" action="#" method="POST">
       <p class="form-description">
-        Disponible para trabajos Frontend y Backend (proyectos, colaboraciones o consultas). Cuéntame tu objetivo y te respondo a la brevedad.
+        Disponible para trabajos Frontend y Backend (proyectos, colaboraciones o
+        consultas). Cuéntame tu objetivo y te respondo a la brevedad.
       </p>
 
       <div class="input-group">
@@ -86,17 +142,24 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
           name="message"
           placeholder="Cuéntame los detalles (mín. 20 caracteres)"
           minlength="20"
-          required
-        ></textarea>
-      </div>
-
-      <div class="btn-enviar">
-        <button type="submit" class="submit-button" aria-label="Enviar mensaje">
-          <span>Enviar</span>
-          <Mail size={18} width={18} class="send-icon" />
-        </button>
+          required></textarea>
       </div>
     </form>
+
+    <!-- El botón de enviar va FUERA de la etiqueta <form> utilizando el componente personalizado FormButton.astro con submit nativo en tamaño small -->
+    <div class="btn-enviar">
+      <FormButton
+        text="Enviar"
+        form="contactForm"
+        type="submit"
+        ariaLabel="Boton de enviar mensaje"
+        width="100%"
+        iconPosition="left"
+        size="small"
+      >
+        <Mail size={24} width={24} />
+      </FormButton>
+    </div>
   </div>
 
   <div class="qr-code-wrapper">
@@ -138,9 +201,9 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
     min-height: 100vh;
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-    grid-template-areas: 
-      "title title" 
-      "form  qr" 
+    grid-template-areas:
+      "title title"
+      "form  qr"
       "form  buttons";
     gap: 40px;
     padding: 80px 20px;
@@ -166,10 +229,27 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
   .form-wrapper {
     grid-area: form;
     position: relative;
-    width: 100%;
-    max-width: 480px;
+    width: 480px; /* Ancho exacto y fijo en escritorio */
     margin: 0 auto;
     filter: drop-shadow(0 0 25px rgba(26, 90, 233, 0.25));
+  }
+
+  @media (min-width: 600px) and (max-width: 900px) {
+    .form-wrapper {
+      width: 400px; /* Ancho exacto y fijo en tableta */
+    }
+  }
+
+  @media (max-width: 599px) {
+    .form-wrapper {
+      width: 340px; /* Ancho exacto y fijo en móvil */
+    }
+  }
+
+  @media (max-width: 350px) {
+    .form-wrapper {
+      width: 100%; /* Fluido solo en pantallas ultra pequeñas */
+    }
   }
 
   .border-overlay {
@@ -184,23 +264,92 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
 
   .border-overlay path {
     fill: none;
-    stroke: rgba(107, 70, 255, 0.5); /* Color de borde brillante (accent-1) */
+    stroke: rgba(
+      56,
+      56,
+      56,
+      0.4
+    ); /* Gris metálico idéntico al borde de las cards */
     stroke-width: 1.5px;
   }
 
+  /* Control de visibilidad del trazado de borde brillante para cada breakpoint */
+  .path-mobile,
+  .path-tablet,
+  .path-desktop {
+    display: none;
+  }
+
+  @media (max-width: 599px) {
+    .path-mobile {
+      display: block;
+    }
+  }
+
+  @media (min-width: 600px) and (max-width: 900px) {
+    .path-tablet {
+      display: block;
+    }
+  }
+
+  @media (min-width: 901px) {
+    .path-desktop {
+      display: block;
+    }
+  }
+
+  /* Formulario base con clip-path dinámico y los mismos efectos metal-glass de las cards */
   .contact-form {
     position: relative;
     z-index: 1;
-    background: rgba(6, 8, 20, 0.85); /* Fondo oscuro translúcido */
-    backdrop-filter: blur(12px);
-    clip-path: url(#notchShape);
-    padding: 3rem 2.5rem 6.5rem 2.5rem; /* Generoso relleno inferior para limpiar la muesca */
+    background: rgba(0, 0, 0, 0.247); /* Mismo fondo que la card de proyectos */
+    backdrop-filter: blur(4px); /* Suave desenfoque idéntico */
+    clip-path: url(#notchMobile); /* Móvil por defecto */
+    padding: 3rem 2.5rem 6.5rem 2.5rem; /* Relleno inferior para dar espacio a la muesca */
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     width: 100%;
     height: 100%;
     border-radius: 24px;
+    transition: clip-path 0.3s ease;
+
+    /* Efectos de sombras internas idénticos a .resume en Card.astro */
+    box-shadow:
+      0 4px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(68, 68, 68, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px -10px rgb(155, 155, 155);
+    overflow: hidden;
+  }
+
+  /* Borde izquierdo con degradado idéntico al pseudoelemento de Card.astro */
+  .contact-form::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(19, 19, 19, 0.8),
+      transparent,
+      rgba(97, 97, 97, 0.3)
+    );
+    pointer-events: none;
+  }
+
+  @media (min-width: 600px) and (max-width: 900px) {
+    .contact-form {
+      clip-path: url(#notchTablet); /* Cambia a muesca de tableta */
+    }
+  }
+
+  @media (min-width: 901px) {
+    .contact-form {
+      clip-path: url(#notchDesktop); /* Cambia a muesca de escritorio */
+    }
   }
 
   .form-description {
@@ -259,52 +408,37 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
     resize: none;
   }
 
+  /* Posicionamiento exacto y adaptable del componente FormButton.astro en el centro de la muesca */
   .btn-enviar {
     position: absolute;
-    bottom: 22px; /* Alineado perfectamente dentro del recorte de la muesca */
+    bottom: -17px; /* Altura de FormButton.astro en size small es de 56px, por lo que este margen lo posiciona perfecto en el centro de la muesca */
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
-    width: auto;
+    width: 255px; /* Ancho de botón fijo en escritorio */
   }
 
-  .submit-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: #11131e;
-    color: #ffffff;
-    border: 1px solid rgba(26, 90, 233, 0.4);
-    border-radius: 12px;
-    padding: 12px 36px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* Forzamos box-sizing border-box en el componente FormButton.astro para lograr centrado milimétrico */
+  .btn-enviar :global(.form-button-wrapper),
+  .btn-enviar :global(.form-button) {
+    box-sizing: border-box !important;
   }
 
-  .submit-button:hover {
-    background: #1a5ae9;
-    border-color: #1a5ae9;
-    box-shadow: 0 4px 20px rgba(26, 90, 233, 0.5);
-    transform: translateY(-2px);
+  @media (min-width: 600px) and (max-width: 900px) {
+    .btn-enviar {
+      width: 220px; /* Ancho de botón fijo en tableta */
+      bottom: -16px; /* Se ajusta para el botón en tamaño small en tableta */
+    }
   }
 
-  .submit-button:active {
-    transform: translateY(0);
+  @media (max-width: 599px) {
+    .btn-enviar {
+      width: 200px; /* Ancho de botón fijo en móvil */
+      bottom: -8px; /* Se ajusta para el botón en tamaño small en móvil */
+    }
   }
 
-  .send-icon {
-    transition: transform 0.3s ease;
-  }
-
-  .submit-button:hover .send-icon {
-    transform: translate(2px, -2px);
-  }
-
-  /* Estilos para el QR de CV */
+  /* Estilos para el QR de CV con efectos metal-glass de las cards */
   .qr-code-wrapper {
     grid-area: qr;
     display: flex;
@@ -315,11 +449,16 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
   }
 
   .qr-code-container {
-    background: #05010d;
-    border: 1px solid rgba(26, 90, 233, 0.3);
+    background: rgba(0, 0, 0, 0.247); /* Transparente igual que las cards */
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(56, 56, 56, 0.3);
     border-radius: 16px;
     padding: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(26, 90, 233, 0.15);
+    box-shadow:
+      0 4px 2px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(68, 68, 68, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 20px -10px rgb(155, 155, 155);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -328,8 +467,9 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
 
   .qr-code-container:hover {
     transform: scale(1.05);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 25px rgba(26, 90, 233, 0.3);
-    border-color: #1a5ae9;
+    /* box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      0 0 25px rgba(26, 90, 233, 0.3); */
   }
 
   .qr-image {
@@ -352,7 +492,6 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
     flex-direction: column;
     gap: 20px;
     width: 100%;
-    max-width: 280px;
     justify-self: center;
   }
 
@@ -368,10 +507,6 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
       padding: 60px 15px;
     }
 
-    .form-wrapper {
-      max-width: 100%;
-    }
-
     .buttons-wrapper {
       flex-direction: row;
       max-width: 480px;
@@ -384,10 +519,9 @@ import { Mail, Linkedin, Github } from "@lucide/astro";
       flex-direction: column;
       max-width: 100%;
     }
-    
+
     .contact-form {
       padding: 2.5rem 1.5rem 6rem 1.5rem;
     }
   }
 </style>
-
