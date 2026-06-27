@@ -1,5 +1,4 @@
 ---
-import { Mail } from "@lucide/astro";
 import FormButton from "./FormButton.astro";
 ---
 
@@ -257,7 +256,7 @@ import FormButton from "./FormButton.astro";
 <style>
   /* Form wrapper con filtro drop-shadow continuo que calza con el clip-path */
   .form-wrapper {
-    filter: drop-shadow(0 0 25px rgba(26, 90, 233, 0.25));
+    filter: drop-shadow(0 0 25px rgba(11, 30, 58, 0.158));
   }
 
   @media (min-width: 600px) and (max-width: 900px) {
@@ -290,13 +289,8 @@ import FormButton from "./FormButton.astro";
 
   .border-overlay path {
     fill: none;
-    stroke: rgba(
-      56,
-      56,
-      56,
-      0.4
-    ); /* Gris metálico idéntico al borde de las cards */
-    stroke-width: 1.5px;
+    stroke: rgba(160, 8, 8, 0.37); /* Gris metálico idéntico al borde de las cards */
+    stroke-width: 0.5px;
   }
 
   /* Control de visibilidad del trazado de borde brillante para cada breakpoint */
@@ -342,10 +336,10 @@ import FormButton from "./FormButton.astro";
 
     /* Efectos de sombras internas idénticos a .resume en Card.astro */
     box-shadow:
-      0 4px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(68, 68, 68, 0.5),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 0 20px -10px rgb(155, 155, 155);
+      0 4px 2px rgba(199, 2, 2, 0.1),
+      inset 0 1px 5px rgba(160, 18, 13, 0.226),
+      inset 0 -1px 40px rgba(250, 20, 4, 0.151),
+      inset 0 1px 10px -20px rgba(62, 0, 134, 0.473);
     overflow: hidden;
   }
 
@@ -359,9 +353,9 @@ import FormButton from "./FormButton.astro";
     height: 100%;
     background: linear-gradient(
       180deg,
-      rgba(19, 19, 19, 0.8),
+      rgba(48, 19, 19, 0.8),
       transparent,
-      rgba(97, 97, 97, 0.3)
+      rgba(185, 30, 30, 0.3)
     );
     pointer-events: none;
   }

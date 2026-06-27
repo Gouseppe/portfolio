@@ -6,7 +6,9 @@ interface Props {
   link: string;
   ariaLabel: string;
   width?: string;
+  borderColor?: string;
 }
+
 let {
   iconPosition,
   textSize,
@@ -14,10 +16,16 @@ let {
   link,
   ariaLabel,
   width = "76px",
+  borderColor = "1a5ae9",
 } = Astro.props;
+const borderColorHover = "#" + borderColor + "ff"; // Agregamos transparencia al color de borde
+borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de borde
 ---
 
-<div class="button-wrapper">
+<div
+  class="button-wrapper"
+  style={`--border-color-wrapper: ${borderColor}; --border-color-wrapper-hover: ${borderColorHover};`}
+>
   <a
     class="button"
     href={link}
@@ -91,7 +99,7 @@ let {
       0 100%,
       0 10px
     );
-    background-color: #385eb259;
+    background-color: var(--border-color-wrapper, #385fb24d);
     border-radius: 12px;
     transition: background-color 0.3s ease-in-out;
   }
@@ -111,8 +119,7 @@ let {
   }
 
   .button-wrapper:has(.button:hover) {
-    /* box-shadow: 0 3px 19px var(--spread, 10px) rgba(193, 203, 224, 0.35); */
-    background-color: #385fb2b0;
+    background-color: var(--border-color-wrapper-hover, #385fb2b0);
   }
 
   @media (max-width: 760px) {

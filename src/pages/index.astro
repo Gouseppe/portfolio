@@ -143,7 +143,7 @@ import ContactMe from "../sections/ContactMe.astro";
     <div class="section-3">
       <Projects />
     </div>
-    <div class="section-5">
+    <div class="section-4">
       <ContactMe />
     </div>
   </main>
@@ -154,24 +154,22 @@ import ContactMe from "../sections/ContactMe.astro";
   // Register the ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
 
-  const getVH = () =>
-    window.visualViewport ? window.visualViewport.height : window.innerHeight;
-
   const circleContainer = document.querySelector(
     ".circle-container",
   ) as HTMLElement;
 
   const circleLayer = document.querySelector(".circle-layer") as HTMLElement;
+  const getVH = () => circleLayer.clientHeight; // Obtener la altura del viewport
 
-  const normalDistance = window.innerWidth / 2 - 150;
-  const maxDistance = 650 - 150;
+  // animacion que controla el movimiento del circulo con el scroll, y cambia de color segun la seccion
 
+  // primera animacion, cuando se hace scroll desde la seccion 1 hasta la seccion 2
   gsap
     .timeline({
       scrollTrigger: {
         trigger: ".section-2",
         start: "top bottom",
-        end: `top top`, // dinámico
+        end: "top top",
         scrub: 1,
       },
     })
@@ -181,31 +179,58 @@ import ContactMe from "../sections/ContactMe.astro";
       y: () => getVH() / 2 - circleContainer.clientHeight / 2,
       ease: "none",
     })
-    .to(".circle", {
-      backgroundColor: "rgba(128, 0, 128, 0.50)",
-    });
-
+    .to(
+      ".circle",
+      {
+        backgroundColor: "rgba(128, 0, 128, 0.50)",
+      },
+      0,
+    );
+  // segunda animacion, cuando se hace scroll desde la seccion 2 hasta la seccion 3
   gsap
     .timeline({
       scrollTrigger: {
         trigger: ".section-3",
         start: "top bottom",
-        end: `top top`, // dinámico
+        end: "top top",
         scrub: 1,
       },
     })
     .to(circleContainer, {
-      // rotateZ: 450,
-      // quiero a x en el final de lado derecho
-      // x: () => "+=100%",
       x: 0,
-
       y: () => getVH() - circleContainer.clientHeight,
       ease: "none",
     })
-    .to(".circle", {
-      backgroundColor: "rgba(230, 230, 85, 0.26)",
-    });
+    .to(
+      ".circle",
+      {
+        backgroundColor: "rgba(230, 230, 85, 0.26)",
+      },
+      0,
+    );
+
+  // tercera animacion, cuando se hace scroll desde la seccion 3 hasta la seccion 4
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: ".section-4",
+        start: "top bottom",
+        end: "top top",
+        scrub: 1,
+      },
+    })
+    .to(circleContainer, {
+      x: () => circleLayer.clientWidth - circleContainer.clientWidth,
+      y: () => getVH() - circleContainer.clientHeight,
+      ease: "none",
+    })
+    .to(
+      ".circle",
+      {
+        backgroundColor: "rgba(255, 86, 86, 0.27)",
+      },
+      0,
+    );
 
   let isAnimating = false; // Variable para controlar el estado de la animación
   let mm = gsap.matchMedia();
@@ -302,6 +327,9 @@ import ContactMe from "../sections/ContactMe.astro";
       // Ejecutar la animación inicial una vez que la página haya cargado completamente
       if (typeof window !== "undefined") {
         initialAnimation.play();
+        // window.addEventListener("load", () => {
+        //   ScrollTrigger.refresh();
+        // });
       }
     },
   );
