@@ -19,6 +19,20 @@
   margin: 0px;
   padding: 0px;
 }
+.title {
+    font-size: var(--font-title);
+  }
+  .sub-title {
+    font-size: var(--font-subtitle);
+    margin-bottom: 0.6rem;
+  }
+.title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
 
 /* html,body{height:100%;margin:0;padding:0} */
 p,body{margin:0;}
