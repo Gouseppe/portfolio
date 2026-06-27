@@ -2,10 +2,8 @@
 interface Props {
   iconPosition: "left" | "right";
   text?: string;
-  link?: string;
   ariaLabel: string;
   width?: string;
-  type?: "submit" | "button";
   form?: string;
   size?: "small" | "medium" | "large";
 }
@@ -13,63 +11,40 @@ interface Props {
 let {
   iconPosition,
   text,
-  link,
   ariaLabel,
   width = "76px",
-  type = "submit",
   form,
   size = "medium",
 } = Astro.props;
 ---
 
 <div class={`form-button-wrapper size-${size}`} style={`width: ${width};`}>
-  {
-    link ? (
-      <a
-        class={`form-button size-${size}`}
-        href={link}
-        target="_blank"
-        aria-label={ariaLabel}
-        style={`width: ${width};`}
-      >
-        <div class="content">
-          {iconPosition === "left" && (
-            <div class="icon">
-              <slot />
-            </div>
-          )}
-          {text && <span>{text}</span>}
-          {iconPosition === "right" && (
-            <div class="icon">
-              <slot />
-            </div>
-          )}
-        </div>
-      </a>
-    ) : (
-      <button
-        class={`form-button size-${size}`}
-        type={type}
-        form={form}
-        aria-label={ariaLabel}
-        style={`width: ${width};`}
-      >
-        <div class="content">
-          {iconPosition === "left" && (
-            <div class="icon">
-              <slot />
-            </div>
-          )}
-          {text && <span>{text}</span>}
-          {iconPosition === "right" && (
-            <div class="icon">
-              <slot />
-            </div>
-          )}
-        </div>
-      </button>
-    )
-  }
+  <button
+    class={`form-button size-${size}`}
+    form={form}
+    type="submit"
+    aria-label={ariaLabel}
+    style={`width: ${width};`}
+  >
+    <div class="content">
+      {
+        iconPosition === "left" && (
+          <div class="icon">
+            <slot />
+            <div class="succesIcon"></div>
+          </div>
+        )
+      }
+      {text && <span>{text}</span>}
+      {
+        iconPosition === "right" && (
+          <div class="icon">
+            <slot />
+          </div>
+        )
+      }
+    </div>
+  </button>
 </div>
 
 <style>
@@ -109,12 +84,12 @@ let {
     border: none;
     cursor: pointer;
     clip-path: polygon(
+      0 10px,
       10px 0,
       100% 0,
       100% calc(100% - 10px),
       calc(100% - 10px) 100%,
-      0 100%,
-      0 10px
+      0 100%
     );
 
     /* Inset shadows idénticos al panel .resume de las cards */

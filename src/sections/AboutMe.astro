@@ -1,17 +1,17 @@
 ---
-import Badge from "../components/Badge.astro";
+import Badge from "@/components/Badge.astro";
 //icons
 import { Contact } from "@lucide/astro";
 //images
-import school from "../assets/school.png";
-import laptop from "../assets/laptop.png";
+import school from "@/assets/school.png";
+import laptop from "@/assets/laptop.png";
 //svg's
-import react from "./../assets/CibReact 1.svg";
-import laravel from "./../assets/Fa6BrandsLaravel 1.svg";
-import astro from "./../assets/SimpleIconsAstro 1.svg";
-import figma from "./../assets/FaBrandsFigma 1.svg";
-import nestjs from "./../assets/SimpleIconsNestjs 1.svg";
-import typescript from "./../assets/FileIconsTypescript 1.svg";
+import react from "@/assets/CibReact 1.svg";
+import laravel from "@/assets/Fa6BrandsLaravel 1.svg";
+import astro from "@/assets/SimpleIconsAstro 1.svg";
+import figma from "@/assets/FaBrandsFigma 1.svg";
+import nestjs from "@/assets/SimpleIconsNestjs 1.svg";
+import typescript from "@/assets/FileIconsTypescript 1.svg";
 
 const svgs = [react, laravel, astro, figma, nestjs, typescript];
 ---
@@ -154,21 +154,7 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
     font-family: system-ui, sans-serif;
     gap: 1rem;
   }
-  .title {
-    font-size: var(--font-title);
-  }
-  .sub-title {
-    font-size: var(--font-subtitle);
-    margin-bottom: 0.6rem;
-  }
 
-  .title-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
   .content-wrapper {
     display: flex;
     flex-direction: row;

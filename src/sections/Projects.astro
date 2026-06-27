@@ -2,18 +2,23 @@
 import Card from "../components/Card.astro";
 // img's
 // svg's
-import project1 from "./../assets/400x600.svg";
-import react from "./../assets/CibReact 1.svg";
-import astro from "./../assets/SimpleIconsAstro 1.svg";
-import typescript from "./../assets/FileIconsTypescript 1.svg";
-import darling1 from "./../assets/darling-in-the-franxx/imagen-1.avif";
-import darling2 from "./../assets/darling-in-the-franxx/imagen-2.png";
-import darling3 from "./../assets/darling-in-the-franxx/imagen-3.jpg";
-import darling4 from "./../assets/darling-in-the-franxx/imagen-4.webp";
+import project1 from "@/assets/400x600.svg";
+import react from "@/assets/CibReact 1.svg";
+import astro from "@/assets/SimpleIconsAstro 1.svg";
+import typescript from "@/assets/FileIconsTypescript 1.svg";
+import darling1 from "@/assets/darling-in-the-franxx/imagen-1.avif";
+import darling2 from "@/assets/darling-in-the-franxx/imagen-2.png";
+import darling3 from "@/assets/darling-in-the-franxx/imagen-3.jpg";
+import darling4 from "@/assets/darling-in-the-franxx/imagen-4.webp";
+// lucide's icons
+import { FolderTree } from "@lucide/astro";
 ---
 
-<section>
-  <h1>Projects</h1>
+<section class="section">
+  <div class="title-wrapper">
+    <FolderTree size={"2.5rem"} />
+    <h2 class="title">Projects</h2>
+  </div>
   <p>
     Here are some of my recent projects. I am always looking for new
     opportunities to work on interesting projects, so if you have any ideas,
@@ -61,7 +66,7 @@ import darling4 from "./../assets/darling-in-the-franxx/imagen-4.webp";
     let movedCcount = 0;
     // animacion automatica de desplazamiento secuencial de las cards que deje de ejecutarse si el usuario no esta viendo
     const highOrderFunction = () => {
-      let inteval: NodeJS.Timeout;
+      let inteval: ReturnType<typeof setInterval> | undefined;
       const active = () => {
         inteval = setInterval(() => {
           actualvalue -= DISTANCE_BETWEEN_CARDS;
@@ -176,6 +181,10 @@ import darling4 from "./../assets/darling-in-the-franxx/imagen-4.webp";
   </script>
 
   <style>
+    h1 {
+      margin-bottom: 2rem;
+      align-self: center;
+    }
     .section {
       width: 100%;
       height: 100vh;
@@ -192,7 +201,7 @@ import darling4 from "./../assets/darling-in-the-franxx/imagen-4.webp";
     }
     .projects-wrapper {
       overflow: hidden;
-
+      width: 100%;
       position: relative;
       mask-image: linear-gradient(
         to right,
