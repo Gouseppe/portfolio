@@ -82,22 +82,32 @@ import FormButton from "./FormButton.astro";
   <div class="form-wrapper">
     <!-- SVG overlay para dibujar el borde continuo y brillante para cada uno de los 3 Breakpoints -->
     <svg class="border-overlay" viewBox="0 0 1 1" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="borderGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255, 86, 86, 0.27)" />
+          <stop offset="55%" stop-color="rgba(255, 86, 86, 0.27)" />
+          <stop offset="100%" stop-color="rgba(255, 86, 86, 0.27)" />
+        </linearGradient>
+      </defs>
       <!-- Borde de Teléfono -->
       <path
         class="path-mobile"
         vector-effect="non-scaling-stroke"
+        stroke="url(#borderGradient)"
         d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.83 C 0.82, 1, 0.81, 0.99, 0.81, 0.98 V 0.94 C 0.81, 0.93, 0.80, 0.92, 0.79, 0.92 H 0.21 L 0.19, 0.94 V 0.98 C 0.19, 0.99, 0.18, 1, 0.17, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
       ></path>
       <!-- Borde de Tableta -->
       <path
         class="path-tablet"
         vector-effect="non-scaling-stroke"
+        stroke="url(#borderGradient)"
         d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.81 C 0.80, 1, 0.79, 0.99, 0.79, 0.98 V 0.945 C 0.79, 0.935, 0.78, 0.925, 0.77, 0.925 H 0.23 L 0.21, 0.945 V 0.98 C 0.21, 0.99, 0.20, 1, 0.19, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
       ></path>
       <!-- Borde de Escritorio -->
       <path
         class="path-desktop"
         vector-effect="non-scaling-stroke"
+        stroke="url(#borderGradient)"
         d="M 0.08, 0 H 0.92 C 0.98, 0, 1, 0.02, 1, 0.08 V 0.92 C 1, 0.98, 0.98, 1, 0.92, 1 H 0.79 C 0.78, 1, 0.77, 0.99, 0.77, 0.98 V 0.95 C 0.77, 0.94, 0.76, 0.93, 0.75, 0.93 H 0.25 L 0.23, 0.95 V 0.98 C 0.23, 0.99, 0.22, 1, 0.21, 1 H 0.08 C 0.02, 1, 0, 0.98, 0, 0.92 V 0.08 C 0, 0.02, 0.02, 0, 0.08, 0 Z"
       ></path>
     </svg>
@@ -129,7 +139,7 @@ import FormButton from "./FormButton.astro";
       </div>
 
       <div class="input-group">
-        <label for="message">Mensaje</label>
+        <label for="message">Mensaje hjk</label>
         <textarea
           id="message"
           name="message"
@@ -149,15 +159,15 @@ import FormButton from "./FormButton.astro";
         iconPosition="left"
         size="small"
       >
-        <div style="width: 24px; height: 100%;"> 
+        <div style="width: 20px; height: 100%;"> 
 
-          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="pacman3351" viewBox="50 0 500 300"><!--In order to externalize the SVG for use as an object, we have to put all the necessary styling inline here.--><style>.pacman3351-dot {
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="pacman3351" viewBox="50 30 240 250" ><!--In order to externalize the SVG for use as an object, we have to put all the necessary styling inline here.--><style>.pacman3351-dot {
             fill: currentColor;
         }
         .pacman3351 {
           height: 100%;
         }
-
+       
         .pacman3351-open,
         .pacman3351-mouth-top,
         .pacman3351-mouth-bottom {
@@ -194,18 +204,9 @@ import FormButton from "./FormButton.astro";
         }
 
 
-        .pacman3351-dot {
-            animation-name: dot3351-motion;
-            animation-duration: 600ms;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-        }
+        
 
-        @keyframes dot3351-motion {
-            100% {
-                transform: translateX(-100px); // distance between dots
-            }
-        }</style><circle class="pacman3351-dot" cx="250" cy="50%" r="10"/><circle class="pacman3351-dot" cx="350" cy="50%" r="10"/><circle class="pacman3351-dot" cx="450" cy="50%" r="10"/><circle class="pacman3351-dot" cx="550" cy="50%" r="10"/><circle class="pacman3351-dot" cx="650" cy="50%" r="10"/><!--Create arcs covering 45°, so there's a little overlap with animations of 30°.--><path class="pacman3351-mouth-bottom" d="
+        </style><!--Create arcs covering 45°, so there's a little overlap with animations of 30°.--><path class="pacman3351-mouth-bottom" d="
         M 150,150
         L 220.4,221.0
         A 100 100 0 0 0 250,150
@@ -228,7 +229,7 @@ import FormButton from "./FormButton.astro";
 <script>
   import emailjs from "@emailjs/browser";
 
-  const sendForm = (e) => {
+  const sendForm = (e: SubmitEvent) => {
     e.preventDefault(); // Evita el envío automático para manejarlo manualmente
 
     emailjs.send(
@@ -246,7 +247,7 @@ import FormButton from "./FormButton.astro";
   emailjs.init(import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY);
   (document.querySelector("#contactForm") as HTMLFormElement).addEventListener(
     "submit",
-    (e) => {
+    (e: SubmitEvent) => {
       console.log("Formulario enviado");
       e.preventDefault();
       // sendForm(e);
@@ -276,6 +277,7 @@ import FormButton from "./FormButton.astro";
       width: 100%; /* Fluido solo en pantallas ultra pequeñas */
     }
   }
+   
 
   .border-overlay {
     position: absolute;
@@ -289,8 +291,7 @@ import FormButton from "./FormButton.astro";
 
   .border-overlay path {
     fill: none;
-    stroke: rgba(160, 8, 8, 0.37); /* Gris metálico idéntico al borde de las cards */
-    stroke-width: 0.5px;
+    stroke-width: 0px;
   }
 
   /* Control de visibilidad del trazado de borde brillante para cada breakpoint */
@@ -336,10 +337,10 @@ import FormButton from "./FormButton.astro";
 
     /* Efectos de sombras internas idénticos a .resume en Card.astro */
     box-shadow:
-      0 4px 2px rgba(199, 2, 2, 0.1),
-      inset 0 1px 5px rgba(160, 18, 13, 0.226),
-      inset 0 -1px 40px rgba(250, 20, 4, 0.151),
-      inset 0 1px 10px -20px rgba(62, 0, 134, 0.473);
+      0 4px 2px rgba(255, 86, 86, 0.27),
+      inset 0 1px 5px rgba(255, 86, 86, 0.27),
+      inset 0 -1px 40px rgba(255, 86, 86, 0.27),
+      inset 0 1px 10px -20px rgba(255, 86, 86, 0.27);
     overflow: hidden;
   }
 
@@ -398,9 +399,9 @@ import FormButton from "./FormButton.astro";
 
   .input-group input,
   .input-group textarea {
-    background: #ffffff;
-    color: #0f172a;
-    border: 2px solid transparent;
+    background: #ffffff00;
+    color: #f0f0f0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 14px 16px;
     font-family: inherit;
@@ -412,15 +413,15 @@ import FormButton from "./FormButton.astro";
 
   .input-group input::placeholder,
   .input-group textarea::placeholder {
-    color: rgba(15, 23, 42, 0.5);
+    color: rgba(255, 255, 255, 0.5);
     font-weight: 400;
   }
 
   .input-group input:focus,
   .input-group textarea:focus {
-    border-color: #1a5ae9; /* Color de foco azul brillante */
+    border-color: #ad1e3d; /* Color de foco azul brillante */
     outline: none;
-    box-shadow: 0 0 12px rgba(26, 90, 233, 0.25);
+    box-shadow: 0 0 12px rgba(211, 13, 13, 0.25);
   }
 
   .input-group textarea {
