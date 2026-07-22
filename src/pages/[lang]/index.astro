@@ -303,7 +303,7 @@ const l = lang;
         trigger: ".section-2",
         start: "top center",
         end: "bottom center",
-        toggleActions: "play reverse play reverse",
+        toggleActions: "restart none restart reverse",
       },
     });
     gsap.to("html", {
@@ -313,7 +313,7 @@ const l = lang;
         trigger: ".section-3",
         start: "top center",
         end: "bottom center",
-        toggleActions: "play reverse play reverse",
+        toggleActions: "restart none restart none",
       },
     });
     gsap.to("html", {
@@ -323,7 +323,7 @@ const l = lang;
         trigger: ".section-4",
         start: "top center",
         end: "bottom center",
-        toggleActions: "play reverse play reverse",
+        toggleActions: "restart none none none",
       },
     });
 
@@ -334,7 +334,6 @@ const l = lang;
           start: "top bottom",
           end: "top top",
           scrub: 1,
-          markers: true,
         },
       })
       .to(circleContainer, {
