@@ -1,5 +1,6 @@
 ---
 import Card from "../components/Card.astro";
+import { textPage } from "@/store/textPage";
 // img's
 // svg's
 import project1 from "@/assets/400x600.svg";
@@ -12,25 +13,28 @@ import darling3 from "@/assets/darling-in-the-franxx/imagen-3.jpg";
 import darling4 from "@/assets/darling-in-the-franxx/imagen-4.webp";
 // lucide's icons
 import { FolderTree } from "@lucide/astro";
+interface Props {
+  lang: "es" | "en";
+}
+
+const t = textPage;
+const { lang } = Astro.props;
+const l = lang;
 ---
 
 <section class="section">
   <div class="title-wrapper">
     <FolderTree size={"2.5rem"} />
-    <h2 class="title">Projects</h2>
+    <h2 class="title">{t.projects.title[l]}</h2>
   </div>
-  <p>
-    Here are some of my recent projects. I am always looking for new
-    opportunities to work on interesting projects, so if you have any ideas,
-    feel free to reach out!
-  </p>
+  <p>{t.projects.description[l]}</p>
   <div class="projects-wrapper">
     <div class="projects up">
       {
         [1, 2, 3, 4, 5, 6, 7, 8].map((e) => (
           <Card
-            title={`Project ${e}`}
-            description="This is a description of project 1. It is a very interesting project that I worked on recently."
+            title={`${t.projects.card.title[l]} ${e}`}
+            description={`${t.projects.card.description[l]} ${e}`}
             badgeimages={[react, astro, typescript]}
             img={project1}
             badgeShadowColor="rgba(230, 230, 85, 0.26)"

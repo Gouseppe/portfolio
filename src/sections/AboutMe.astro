@@ -1,5 +1,6 @@
 ---
 import Badge from "@/components/Badge.astro";
+import { textPage } from "@/store/textPage";
 //icons
 import { Contact } from "@lucide/astro";
 //images
@@ -14,12 +15,19 @@ import nestjs from "@/assets/SimpleIconsNestjs 1.svg";
 import typescript from "@/assets/FileIconsTypescript 1.svg";
 
 const svgs = [react, laravel, astro, figma, nestjs, typescript];
+interface Props {
+  lang: "es" | "en";
+}
+
+const t = textPage;
+const { lang } = Astro.props;
+const l = lang;
 ---
 
 <section class="section">
   <div class="title-wrapper">
     <Contact size={"2.5rem"} />
-    <h2 class="title">Sobre mi</h2>
+    <h2 class="title">{t.aboutMe.title[l]}</h2>
   </div>
 
   <div class="content-wrapper">
@@ -31,61 +39,30 @@ const svgs = [react, laravel, astro, figma, nestjs, typescript];
           class="float-image uno"
         />
 
-        <p>
-          Soy un desarrollador apasionado por crear experiencias digitales que
-          combinen funcionalidad y estética.
-        </p>
-        <p>
-          Mi Viaje en el mundo de la programación comenzó en la universidad y
-          desde entonces no he dejado de aprender y evolucionar en este
-          fascinante campo.
-        </p>
+        <p>{t.aboutMe.description.p1[l]}</p>
+        <p>{t.aboutMe.description.p2[l]}</p>
       </div>
 
-      <h3 class="sub-title">Desarrollo Frontend</h3>
+      <h3 class="sub-title">{t.aboutMe.frontend.title[l]}</h3>
       <div class="floating">
         <img
           src={laptop.src}
           alt="illustration frontend"
           class="float-image dos"
         />
-        <p>
-          Mi verdadera pasión reside en el frontend, donde encuentro el
-          equilibrio perfecto entre diseño atractivo y experiencia de usuario
-          intuitiva. Me especializo en crear interfaces que no solo son
-          visualmente impactantes y únicas, sino también funcionales y cómodas
-          para los usuarios. Utilizo estructuras reconocibles combinadas con
-          elementos innovadores para garantizar una navegación fluida y
-          agradable.
-        </p>
-        <p>
-          funcionales y cómodas para los usuarios. Utilizo estructuras
-          reconocibles combinadas con elementos innovadores para garantizar una
-          navegación fluida y agradable.
-        </p>
+        <p>{t.aboutMe.frontend.p1[l]}</p>
       </div>
     </div>
     <div class="content-wrapper__column">
-      <h3 class="sub-title">Desarrollo Backend</h3>
-      <p>
-        Aunque mi especialidad es el frontend, he desarrollado sólidas
-        competencias en el backend que me permiten crear aplicaciones completas
-        y funcionales. Tengo experiencia en la creación de APIs RESTful,
-        implementación de conexiones a bases de datos y desarrollo de
-        operaciones CRUD robustas y seguras.
-      </p>
-      <p>
-        Cuando no estoy programando, disfruto de los videojuegos y el anime, que
-        no solo son mis hobbies sino también fuentes de inspiración creativa.
-        Creo firmemente en el aprendizaje continuo y me mantengo constantemente
-        actualizado con las últimas tendencias y tecnologías en desarrollo web.
-      </p>
-      <h3 class="sub-title">Skills</h3>
+      <h3 class="sub-title">{t.aboutMe.backend.title[l]}</h3>
+      <p>{t.aboutMe.backend.p1[l]}</p>
+      <p>{t.aboutMe.backend.p2[l]}</p>
+      <h3 class="sub-title">{t.aboutMe.skills[l]}</h3>
       <div class="badge-list">
         {
           svgs.map((svg) => (
             <div class="badge-item">
-              <Badge size="60px" ariaLabel="Tech Badge">
+              <Badge size="60px" ariaLabel={t.aboutMe.skills[l]}>
                 <img src={svg.src} alt="" />
               </Badge>
             </div>

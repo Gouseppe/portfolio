@@ -1,9 +1,16 @@
 ---
+import { textPage } from "@/store/textPage";
+interface Props {
+  lang: "es" | "en";
+}
 
+const t = textPage;
+const { lang } = Astro.props;
+const l = lang;
 ---
 
 <div class="main">
-  <div>Bienvenido a mi portafolio, próximamente habran avances...</div>
+  <div>{t.comingSoon.message[l]}</div>
 </div>
 <!-- <Welcome /> -->
 

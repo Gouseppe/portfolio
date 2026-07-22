@@ -211,10 +211,12 @@ const {
       );
 
       viewButton.addEventListener("click", () => {
+        document.body.style.overflow = "hidden";
         dialog.showModal();
         start();
       });
       cancelButton.addEventListener("click", () => {
+        document.body.style.overflow = "";
         dialog.close();
         stop();
       });

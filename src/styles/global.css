@@ -13,7 +13,17 @@
   --font-title: 3rem;
   --thumb-color: #151515; /* Color inicial */
 }
-
+html {
+  scroll-behavior: smooth;
+  --button-color: #1a5ae959;
+  --button-color-hover: #1a5ae9;
+}
+main {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 *:not(dialog){
   box-sizing:border-box;
   margin: 0px;

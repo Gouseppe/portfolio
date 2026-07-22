@@ -1,5 +1,14 @@
 ---
 import FormButton from "./FormButton.astro";
+import { textPage } from "@/store/textPage";
+
+interface Props {
+  lang: "es" | "en";
+}
+
+const t = textPage;
+const {lang} = Astro.props;
+const l = lang;
 ---
 
 <div>
@@ -113,37 +122,34 @@ import FormButton from "./FormButton.astro";
     </svg>
 
     <form class="contact-form" id="contactForm">
-      <p class="form-description">
-        Disponible para trabajos Frontend y Backend (proyectos, colaboraciones o
-        consultas). Cuéntame tu objetivo y te respondo a la brevedad.
-      </p>
+      <p class="form-description">{t.form.description[l]}</p>
 
       <div class="input-group">
-        <label for="name">Nombre Completo</label>
+        <label for="name">{t.form.name.label[l]}</label>
         <input
           type="text"
           id="fullName"
           name="fullName"
-          placeholder="Nombre completo"
+          placeholder={t.form.name.placeholder[l]}
         />
       </div>
 
       <div class="input-group">
-        <label for="email">correo electronico</label>
+        <label for="email">{t.form.email.label[l]}</label>
         <input
           type="email"
           id="email"
           name="email"
-          placeholder="correo electronico"
+          placeholder={t.form.email.placeholder[l]}
         />
       </div>
 
       <div class="input-group">
-        <label for="message">Mensaje hjk</label>
+        <label for="message">{t.form.message.label[l]}</label>
         <textarea
           id="message"
           name="message"
-          placeholder="Cuéntame los detalles (mín. 20 caracteres)"
+          placeholder={t.form.message.placeholder[l]}
           minlength="20"></textarea>
       </div>
       
@@ -152,9 +158,9 @@ import FormButton from "./FormButton.astro";
     <!-- El botón de enviar va FUERA de la etiqueta <form> utilizando el componente personalizado FormButton.astro con submit nativo en tamaño small -->
     <div class="btn-enviar">
       <FormButton
-        text="Enviar"
+        text={t.form.submit[l]}
         form="contactForm"
-        ariaLabel="Boton de enviar mensaje"
+        ariaLabel={t.form.submit[l]}
         width="100%"
         iconPosition="left"
         size="small"

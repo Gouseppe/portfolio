@@ -1,0 +1,773 @@
+---
+//astro components
+import Layout from "@/layouts/Layout.astro";
+import Circle from "@/components/Circle.astro";
+import Button from "@/components/Button.astro";
+import AboutMe from "@/sections/AboutMe.astro";
+import { textPage } from "@/store/textPage";
+//images
+import { Image } from "astro:assets";
+import presentationImage from "@/assets/presentation-image.webp";
+import meWaving from "@/assets/me-waving.webp";
+import mePlaying from "@/assets/me-playing.webp";
+import meCoding from "@/assets/me-coding.webp";
+//lucide icons
+import { Mail, Linkedin, Github, Download } from "@lucide/astro";
+import Projects from "@/sections/Projects.astro";
+import ContactMe from "@/sections/ContactMe.astro";
+import NavBar from "@/components/NavBar.astro";
+
+export async function getStaticPaths() {
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
+}
+
+const t = textPage;
+const { lang } = Astro.params as { lang: "es" | "en" };
+const l = lang;
+---
+
+<Layout title="mi pagina web" description="" lang={lang}>
+  <div class="black-screen"></div>
+  <main>
+    <div class="navbar-container">
+      <NavBar lang={lang} />
+    </div>
+    <div class="section fixed circle-layer">
+      <div class="circle-container">
+        <!-- <div class="circle"></div> -->
+        <Circle colorPC="#1a5ae959" colorMobile="#1a5ae98a" />
+      </div>
+    </div>
+    <div class="section hero section-1" id="home">
+      <div class="hero__left-side">
+        <div class="hero__greeting">
+          <div>
+            <p>{t.hero.greeting.hi[l]}</p>
+            <span class="emoji">👋</span>
+          </div>
+          <p>{t.hero.greeting.name[l]}</p>
+        </div>
+        <div class="hero__phrase">
+          <p>{t.hero.phrase.text[l]}</p>
+          <p>{t.hero.phrase.author[l]}</p>
+        </div>
+        <div class="right-side__buttons-container mobile">
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.linkedinAria[l]}
+              link="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
+            >
+              <Linkedin width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.githubAria[l]}
+              link="https://github.com/gouseppe"
+            >
+              <Github width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.emailAria[l]}
+              link="mailto:gouseppe.dev@gmail.com"
+            >
+              <Mail width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+        </div>
+        <div class="resume-container">
+          <div class="download-icon">
+            <a
+              href={presentationImage.src}
+              download="Fernando_Gouseppe_Resume"
+              aria-label={t.social.downloadResume[l]}
+            >
+              <Download />
+            </a>
+          </div>
+          <a href={presentationImage.src} download="Fernando_Gouseppe_Resume">
+            <img src={presentationImage.src} alt={t.social.downloadResume[l]} />
+          </a>
+        </div>
+      </div>
+      <div class="hero__right-side">
+        <div class="me-images" data-astro-transition-persis>
+          <Image
+            class="me-waving"
+            src={meWaving}
+            alt=""
+            eagerly-loaded
+            format={"webp"}
+            loading="eager"
+            data-astro-transition-persis
+          />
+          <Image
+            class="me-playing"
+            src={mePlaying}
+            alt=""
+            loading="eager"
+            data-astro-transition-persis
+          />
+          <Image
+            class="me-coding"
+            src={meCoding}
+            alt=""
+            loading="eager"
+            data-astro-transition-persis
+          />
+        </div>
+        <div class="right-side__buttons-container">
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.linkedinAria[l]}
+              link="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
+            >
+              <Linkedin width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.githubAria[l]}
+              link="https://github.com/gouseppe"
+            >
+              <Github width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+          <div class="right-side__button-container">
+            <Button
+              text=""
+              iconPosition="right"
+              ariaLabel={t.social.emailAria[l]}
+              link="mailto:gouseppe.dev@gmail.com"
+            >
+              <Mail width={"100%"} height={"100%"} />
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div class="hero__greeting mobile">
+        <p>{t.hero.greeting.welcome[l]}</p>
+        <span class="emoji mobile">👋</span>
+      </div>
+    </div>
+    <div class="section-2" id="about">
+      <AboutMe lang={lang} />
+    </div>
+    <div class="section-3" id="projects">
+      <Projects lang={lang} />
+    </div>
+    <div class="section-4" id="contact">
+      <ContactMe lang={lang} />
+    </div>
+  </main>
+</Layout>
+<script>
+  import { gsap } from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+
+  // Register the ScrollTrigger plugin
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:after-swap", () => {
+    console.log("astro:after-swap");
+    document.body.style.overflowY = "auto";
+    gsap.fromTo(
+      ".right-side__button-container",
+      {
+        y: 20,
+        opacity: 0, // Animamos desde opacity: 0
+      },
+      {
+        duration: 1,
+        stagger: 0.15,
+        y: 0,
+        opacity: 1,
+        ease: "sine.out",
+      },
+    );
+
+    gsap.to(".black-screen", {
+      zIndex: -1,
+      autoAlpha: 0,
+      duration: 0.5,
+    });
+    gsap.set("body", { overflowY: "auto" });
+    // ---------- animacion de mi persona
+    const meImagesTl = gsap.timeline({ repeat: -1 });
+
+    meImagesTl
+      .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
+      .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
+      // Animación de balanceo
+      .to(
+        ".me-waving",
+        { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
+        0.1,
+      )
+      .to(
+        ".me-waving",
+        { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
+        0.4,
+      )
+      .to(
+        ".me-waving",
+        { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
+        0.7,
+      )
+      // Segunda imagen: .me-playing
+      .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
+      .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
+      // Animación de salto
+      .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
+      .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+
+      // Tercera imagen: .me-coding
+      .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
+      .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
+      // Animación de zoom
+      .to(
+        ".me-coding",
+        { scale: 1.05, duration: 0.2, ease: "power1.inOut" },
+        4.1,
+      )
+      .to(".me-coding", { scale: 1, duration: 0.3, ease: "power1.inOut" }, 4.3)
+      // Pausa para la última imagen
+      .to({}, { duration: 2 }, 5);
+
+    // ---------- animacion de la navbar
+    gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
+    gsap.to(".navbar-container", {
+      y: 0,
+      duration: 1,
+      ease: "power1.out",
+      autoAlpha: 1,
+      zIndex: 100,
+    });
+    const elemento = document.querySelector(".navbar-container") as HTMLElement;
+    let navTween: gsap.core.Tween | null = null;
+    ScrollTrigger.create({
+      start: `top -100`,
+      onUpdate: (self) => {
+        if (navTween) navTween.kill();
+        if (self.direction === 1) {
+          navTween = gsap.to(elemento, {
+            yPercent: -100,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        } else if (self.direction === -1) {
+          navTween = gsap.to(elemento, {
+            yPercent: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        }
+      },
+    });
+  });
+
+  document.addEventListener("astro:page-load", () => {
+    console.log("astro:page-load");
+    const circleContainer = document.querySelector(
+      ".circle-container",
+    ) as HTMLElement;
+    const circleLayer = document.querySelector(".circle-layer") as HTMLElement;
+
+    // Cache layout reads una sola vez, no en cada frame
+    const cachedWidth = circleLayer.clientWidth;
+    const cachedHeight = circleLayer.clientHeight;
+    const containerW = circleContainer.clientWidth;
+    const containerH = circleContainer.clientHeight;
+
+    const centerX = cachedWidth / 2 - containerW / 2;
+    const centerY = cachedHeight / 2 - containerH / 2;
+    const bottomRight = cachedWidth - containerW;
+    const bottomY = cachedHeight - containerH;
+
+    gsap.to("html", {
+      "--button-color": "rgba(128, 0, 128, 0.50)",
+      "--button-color-hover": "rgba(128, 0, 128)",
+      scrollTrigger: {
+        trigger: ".section-2",
+        start: "top center",
+        end: "bottom center",
+        toggleActions: "play reverse play reverse",
+      },
+    });
+    gsap.to("html", {
+      "--button-color": "rgba(230, 230, 85, 0.26)",
+      "--button-color-hover": "rgba(230, 230, 85)",
+      scrollTrigger: {
+        trigger: ".section-3",
+        start: "top center",
+        end: "bottom center",
+        toggleActions: "play reverse play reverse",
+      },
+    });
+    gsap.to("html", {
+      "--button-color": "#59272759",
+      "--button-color-hover": "#592727ff",
+      scrollTrigger: {
+        trigger: ".section-4",
+        start: "top center",
+        end: "bottom center",
+        toggleActions: "play reverse play reverse",
+      },
+    });
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".section-2",
+          start: "top bottom",
+          end: "top top",
+          scrub: 1,
+          markers: true,
+        },
+      })
+      .to(circleContainer, {
+        x: centerX,
+        y: centerY,
+        ease: "none",
+      })
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(128, 0, 128, 0.50)",
+        },
+        0,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".section-3",
+          start: "top bottom",
+          end: "top top",
+          scrub: 1,
+        },
+      })
+      .to(circleContainer, {
+        x: 0,
+        y: bottomY,
+        ease: "none",
+      })
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(230, 230, 85, 0.26)",
+        },
+        0,
+      );
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".section-4",
+          start: "top bottom",
+          end: "top top",
+          scrub: 1,
+        },
+      })
+      .to(circleContainer, {
+        x: bottomRight,
+        y: bottomY,
+        ease: "none",
+      })
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(255, 86, 86, 0.27)",
+        },
+        0,
+      );
+  });
+
+  // ---------- animacion de la navbar
+  gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
+  const navbarTl = gsap.timeline({
+    delay: 3.5,
+  });
+  navbarTl.to(
+    ".navbar-container",
+    { y: 0, duration: 1, ease: "power1.out", autoAlpha: 1, zIndex: 100 },
+    0,
+  );
+  const elemento = document.querySelector(".navbar-container") as HTMLElement;
+  let navTween: gsap.core.Tween | null = null;
+  ScrollTrigger.create({
+    start: `top -100`,
+    onUpdate: (self) => {
+      if (navTween) navTween.kill();
+      if (self.direction === 1) {
+        navTween = gsap.to(elemento, {
+          yPercent: -100,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      } else if (self.direction === -1) {
+        navTween = gsap.to(elemento, {
+          yPercent: 0,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      }
+    },
+  });
+
+  // ---------- animacion de mi persona
+  const meImagesTl = gsap.timeline({ repeat: -1, delay: 3 });
+
+  meImagesTl
+    .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
+    .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
+    // Animación de balanceo
+    .to(
+      ".me-waving",
+      { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
+      0.1,
+    )
+    .to(
+      ".me-waving",
+      { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
+      0.4,
+    )
+    .to(
+      ".me-waving",
+      { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
+      0.7,
+    )
+    // Segunda imagen: .me-playing
+    .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
+    .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
+    // Animación de salto
+    .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
+    .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+
+    // Tercera imagen: .me-coding
+    .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
+    .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
+    // Animación de zoom
+    .to(".me-coding", { scale: 1.05, duration: 0.2, ease: "power1.inOut" }, 4.1)
+    .to(".me-coding", { scale: 1, duration: 0.3, ease: "power1.inOut" }, 4.3)
+    // Pausa para la última imagen
+    .to({}, { duration: 2 }, 5);
+
+  let isAnimating = false; // Variable para controlar el estado de la animación
+  let mm = gsap.matchMedia();
+  mm.add(
+    {
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
+    },
+    (context: any) => {
+      let { isMobile, isDesktop } = context.conditions;
+      const emoji = isMobile
+        ? (document.querySelector(".emoji.mobile") as HTMLElement)
+        : (document.querySelector(".emoji") as HTMLElement);
+
+      if (isDesktop) {
+        // gsap.set(circleContainer, {
+        //   x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
+        // });
+      }
+      const initialAnimation = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power1.inOut" },
+        onComplete: () => {
+          // Aquí agregas el listener solo cuando termina toda la animación inicial
+
+          emoji.addEventListener("mouseenter", () => {
+            if (!isAnimating) {
+              gsap.to(".emoji", {
+                rotation: 20,
+                duration: 0.5,
+                yoyo: true,
+                repeat: 3,
+                transformOrigin: "bottom right",
+                ease: "power1.inOut",
+                onStart: () => {
+                  isAnimating = true;
+                },
+                onComplete: () => {
+                  isAnimating = false;
+                },
+              });
+            }
+          });
+        },
+      });
+      initialAnimation
+        .set(emoji, {
+          top: "50%",
+          left: "50%",
+          transform: "translate(50%, 50%) scale(4)",
+          position: "absolute",
+          transformOrigin: "bottom right",
+        })
+        .to(emoji, {
+          opacity: 1,
+          duration: 0.9,
+        })
+        .to(emoji, {
+          rotation: 20,
+          yoyo: true,
+          repeat: 3,
+          duration: 0.5,
+        })
+        .to(emoji, {
+          top: "auto",
+          left: "auto",
+          x: isMobile ? 98.295 : 98.5,
+          transform: "translate(0%, 0%)",
+          scale: 1,
+          duration: 0.5,
+          delay: 0.5,
+        })
+        .to(".black-screen", {
+          zIndex: -1,
+          autoAlpha: 0,
+          duration: 0.5,
+        })
+        .set("body", { overflowY: "auto" })
+        .fromTo(
+          ".right-side__button-container",
+          {
+            y: 20,
+            opacity: 0, // Animamos desde opacity: 0
+          },
+          {
+            duration: 1,
+            stagger: 0.15,
+            y: 0,
+            opacity: 1,
+            ease: "sine.out",
+          },
+        );
+
+      // Ejecutar la animación inicial una vez que la página haya cargado completamente
+      if (typeof window !== "undefined") {
+        initialAnimation.play();
+        // window.addEventListener("load", () => {
+        //   ScrollTrigger.refresh();
+        // });
+      }
+    },
+  );
+</script>
+<style>
+  /* :root {
+	--font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+	--font-size-lg: clamp(1.2rem, 0.7vw + 1.2rem, 1.5rem);
+	--font-size-xl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  } */
+
+  .fixed {
+    position: fixed;
+    top: 0px;
+    z-index: -1;
+  }
+
+  * {
+    color: white;
+  }
+  body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  .navbar-container {
+    position: fixed;
+    padding-top: 4vh;
+    width: 100%;
+    z-index: 10;
+    will-change: transform;
+  }
+  .me-images {
+    overflow: hidden;
+  }
+  .me-images img {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .circle-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 0;
+    will-change: transform;
+  }
+  .section-1,
+  .section-2,
+  .section-3,
+  .section-4,
+  .section-5 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .section {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+
+    padding: 10px;
+  }
+
+  .hero {
+    flex-direction: row;
+    position: relative;
+  }
+  .hero__left-side,
+  .hero__right-side {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+  }
+  .hero__left-side {
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+  }
+  .hero__greeting {
+    display: flex;
+    width: 100%;
+    font-size: var(--font-title);
+    flex-direction: column;
+    text-align: left;
+    margin-left: 2rem;
+  }
+  .hero__greeting div {
+    display: flex;
+    align-items: center;
+  }
+
+  .hero__phrase {
+    font-size: var(--font-subtitle);
+    text-align: right;
+  }
+
+  .hero__right-side {
+    align-items: center;
+    justify-content: center;
+  }
+  .right-side__button-container {
+    opacity: 0;
+  }
+  .right-side__buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .me-images {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    aspect-ratio: 1/1;
+    text-align: left;
+  }
+  .resume-container {
+    position: relative;
+  }
+  .download-icon {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  .download-icon:hover {
+    transform: scale(1.2);
+  }
+  img {
+    width: 100%;
+    height: auto;
+  }
+  .black-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 15;
+    height: 100vh;
+    width: 100%;
+    background-color: #05010d;
+  }
+
+  .emoji {
+    transform-origin: bottom center;
+    z-index: 40;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    y: -10;
+    scale: 4;
+    opacity: 0;
+  }
+  @media (min-width: 768px) {
+    .mobile {
+      display: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .hero {
+      flex-direction: column-reverse;
+      overflow: hidden;
+      width: 100%;
+      gap: 0px;
+      justify-content: center;
+    }
+    .hero__greeting:not(.mobile) {
+      display: none;
+    }
+    .hero__greeting.mobile {
+      display: flex;
+      font-size: var(--font-title);
+      align-items: center;
+      margin: 0px;
+      gap: 0px;
+    }
+    .hero__greeting.mobile p {
+      transform: translateX(-26.095px);
+    }
+    .hero__right-side {
+      width: 60%;
+      flex: 0;
+    }
+    .right-side__buttons-container {
+      display: flex;
+    }
+    .right-side__buttons-container:not(.mobile) {
+      display: none !important;
+    }
+    .hero__phrase {
+      text-align: center;
+    }
+    .hero__left-side {
+      flex: 0;
+      gap: 15px;
+    }
+    .me-images {
+      overflow: visible;
+    }
+  }
+</style>

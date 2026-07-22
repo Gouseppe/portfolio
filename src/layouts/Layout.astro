@@ -1,21 +1,30 @@
 ---
 import "./../styles/global.css";
-const { title, description } = Astro.props;
+import { textPage } from "@/store/textPage";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  lang: "es" | "en";
+  title?: string;
+  description?: string;
+}
+
+const t = textPage;
+const { title, description, lang } = Astro.props;
+const l = lang;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title || "Gouseppe - Portafolio"}</title>
-    <meta
-      name="description"
-      content={description || "Portafolio de Gouseppe"}
-    />
+    <title>{title || t.layout.title[l]}</title>
+    <meta name="description" content={description || t.layout.description[l]} />
+    <ClientRouter />
   </head>
   <body>
     <slot />

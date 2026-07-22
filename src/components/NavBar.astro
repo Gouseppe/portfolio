@@ -1,0 +1,97 @@
+---
+import { textPage } from "@/store/textPage";
+import Button from "./Button.astro";
+interface Props {
+  lang: "es" | "en";
+}
+
+const t = textPage;
+const { lang } = Astro.props;
+const l = lang;
+---
+
+<ul class="navbar">
+  <li class="navbar__item">
+    <Button
+      text={t.nav.home[l]}
+      ariaLabel={t.nav.home[l]}
+      link="#hero"
+      iconPosition="right"
+      target="_self"
+      width="auto"
+    />
+  </li>
+  <li class="navbar__item">
+    <Button
+      text={t.nav.about[l]}
+      ariaLabel={t.nav.about[l]}
+      link="#about"
+      iconPosition="right"
+      target="_self"
+      width="auto"
+    />
+  </li>
+  <li class="navbar__item">
+    <Button
+      text={t.nav.projects[l]}
+      ariaLabel={t.nav.projects[l]}
+      link="#projects"
+      iconPosition="right"
+      target="_self"
+      width="auto"
+    />
+  </li>
+  <li class="navbar__item">
+    <Button
+      text={t.nav.contact[l]}
+      ariaLabel={t.nav.contact[l]}
+      link="#contact"
+      iconPosition="right"
+      target="_self"
+      width="auto"
+    />
+  </li>
+  <li class="navbar__item">
+    <Button
+      text="ES"
+      link="/es/"
+      target="_self"
+      iconPosition="right"
+      width="auto"
+      isalink={true}
+      ariaLabel="ES"
+    />
+  </li>
+  <li class="navbar__item">
+    <Button
+      text="EN"
+      link="/en/"
+      target="_self"
+      iconPosition="right"
+      width="auto"
+      isalink={true}
+      ariaLabel="EN"
+    />
+  </li>
+</ul>
+
+<style>
+  .navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+  }
+  .navbar__item {
+    list-style: none;
+  }
+</style>
