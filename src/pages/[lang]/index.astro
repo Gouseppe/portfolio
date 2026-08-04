@@ -99,7 +99,7 @@ const l = lang;
         </div>
       </div>
       <div class="hero__right-side">
-        <div class="me-images" data-astro-transition-persis>
+        <div class="me-images">
           <Image
             class="me-waving"
             src={meWaving}
@@ -107,22 +107,9 @@ const l = lang;
             eagerly-loaded
             format={"webp"}
             loading="eager"
-            data-astro-transition-persis
           />
-          <Image
-            class="me-playing"
-            src={mePlaying}
-            alt=""
-            loading="eager"
-            data-astro-transition-persis
-          />
-          <Image
-            class="me-coding"
-            src={meCoding}
-            alt=""
-            loading="eager"
-            data-astro-transition-persis
-          />
+          <Image class="me-playing" src={mePlaying} alt="" loading="eager" />
+          <Image class="me-coding" src={meCoding} alt="" loading="eager" />
         </div>
         <div class="right-side__buttons-container">
           <div class="right-side__button-container">
@@ -180,368 +167,318 @@ const l = lang;
   // Register the ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
 
-  document.addEventListener("astro:after-swap", () => {
-    console.log("astro:after-swap");
-    document.body.style.overflowY = "auto";
-    gsap.fromTo(
-      ".right-side__button-container",
-      {
-        y: 20,
-        opacity: 0, // Animamos desde opacity: 0
-      },
-      {
-        duration: 1,
-        stagger: 0.15,
-        y: 0,
-        opacity: 1,
-        ease: "sine.out",
-      },
-    );
+  let ctx: gsap.Context | undefined;
+  let isFirstLoad = true;
 
-    gsap.to(".black-screen", {
-      zIndex: -1,
-      autoAlpha: 0,
-      duration: 0.5,
-    });
-    gsap.set("body", { overflowY: "auto" });
-    // ---------- animacion de mi persona
-    const meImagesTl = gsap.timeline({ repeat: -1 });
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
 
-    meImagesTl
-      .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
-      .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
-      // Animación de balanceo
-      .to(
-        ".me-waving",
-        { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
-        0.1,
-      )
-      .to(
-        ".me-waving",
-        { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
-        0.4,
-      )
-      .to(
-        ".me-waving",
-        { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
-        0.7,
-      )
-      // Segunda imagen: .me-playing
-      .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
-      .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
-      // Animación de salto
-      .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
-      .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+  document.addEventListener("astro:page-load", () => initPage());
 
-      // Tercera imagen: .me-coding
-      .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
-      .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
-      // Animación de zoom
-      .to(
-        ".me-coding",
-        { scale: 1.05, duration: 0.2, ease: "power1.inOut" },
-        4.1,
-      )
-      .to(".me-coding", { scale: 1, duration: 0.3, ease: "power1.inOut" }, 4.3)
-      // Pausa para la última imagen
-      .to({}, { duration: 2 }, 5);
+  function initPage() {
+    ctx = gsap.context(() => {
+      // ---------- circulo y colores
+      const circleContainer = document.querySelector(
+        ".circle-container",
+      ) as HTMLElement;
+      const circleLayer = document.querySelector(
+        ".circle-layer",
+      ) as HTMLElement;
 
-    // ---------- animacion de la navbar
-    gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
-    gsap.to(".navbar-container", {
-      y: 0,
-      duration: 1,
-      ease: "power1.out",
-      autoAlpha: 1,
-      zIndex: 100,
-    });
-    const elemento = document.querySelector(".navbar-container") as HTMLElement;
-    let navTween: gsap.core.Tween | null = null;
-    ScrollTrigger.create({
-      start: `top -100`,
-      onUpdate: (self) => {
-        if (navTween) navTween.kill();
-        if (self.direction === 1) {
-          navTween = gsap.to(elemento, {
-            yPercent: -100,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        } else if (self.direction === -1) {
-          navTween = gsap.to(elemento, {
-            yPercent: 0,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        }
-      },
-    });
-  });
+      // Cache layout reads una sola vez, no en cada frame
+      const cachedWidth = circleLayer.clientWidth;
+      const cachedHeight = circleLayer.clientHeight;
+      const containerW = circleContainer.clientWidth;
+      const containerH = circleContainer.clientHeight;
 
-  document.addEventListener("astro:page-load", () => {
-    console.log("astro:page-load");
-    const circleContainer = document.querySelector(
-      ".circle-container",
-    ) as HTMLElement;
-    const circleLayer = document.querySelector(".circle-layer") as HTMLElement;
+      const centerX = cachedWidth / 2 - containerW / 2;
+      const centerY = cachedHeight / 2 - containerH / 2;
+      const bottomRight = cachedWidth - containerW;
+      const bottomY = cachedHeight - containerH;
 
-    // Cache layout reads una sola vez, no en cada frame
-    const cachedWidth = circleLayer.clientWidth;
-    const cachedHeight = circleLayer.clientHeight;
-    const containerW = circleContainer.clientWidth;
-    const containerH = circleContainer.clientHeight;
-
-    const centerX = cachedWidth / 2 - containerW / 2;
-    const centerY = cachedHeight / 2 - containerH / 2;
-    const bottomRight = cachedWidth - containerW;
-    const bottomY = cachedHeight - containerH;
-
-    gsap.to("html", {
-      "--button-color": "rgba(128, 0, 128, 0.50)",
-      "--button-color-hover": "rgba(128, 0, 128)",
-      scrollTrigger: {
-        trigger: ".section-2",
-        start: "top center",
-        end: "bottom center",
-        toggleActions: "restart none restart reverse",
-      },
-    });
-    gsap.to("html", {
-      "--button-color": "rgba(230, 230, 85, 0.26)",
-      "--button-color-hover": "rgba(230, 230, 85)",
-      scrollTrigger: {
-        trigger: ".section-3",
-        start: "top center",
-        end: "bottom center",
-        toggleActions: "restart none restart none",
-      },
-    });
-    gsap.to("html", {
-      "--button-color": "#59272759",
-      "--button-color-hover": "#592727ff",
-      scrollTrigger: {
-        trigger: ".section-4",
-        start: "top center",
-        end: "bottom center",
-        toggleActions: "restart none none none",
-      },
-    });
-
-    gsap
-      .timeline({
+      gsap.to("html", {
+        "--button-color": "rgba(128, 0, 128, 0.50)",
+        "--button-color-hover": "rgba(128, 0, 128)",
         scrollTrigger: {
           trigger: ".section-2",
-          start: "top bottom",
-          end: "top top",
-          scrub: 1,
-        },
-      })
-      .to(circleContainer, {
-        x: centerX,
-        y: centerY,
-        ease: "none",
-      })
-      .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(128, 0, 128, 0.50)",
-        },
-        0,
-      );
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".section-3",
-          start: "top bottom",
-          end: "top top",
-          scrub: 1,
-        },
-      })
-      .to(circleContainer, {
-        x: 0,
-        y: bottomY,
-        ease: "none",
-      })
-      .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(230, 230, 85, 0.26)",
-        },
-        0,
-      );
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".section-4",
-          start: "top bottom",
-          end: "top top",
-          scrub: 1,
-        },
-      })
-      .to(circleContainer, {
-        x: bottomRight,
-        y: bottomY,
-        ease: "none",
-      })
-      .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(255, 86, 86, 0.27)",
-        },
-        0,
-      );
-  });
-
-  // ---------- animacion de la navbar
-  gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
-  const navbarTl = gsap.timeline({
-    delay: 3.5,
-  });
-  navbarTl.to(
-    ".navbar-container",
-    { y: 0, duration: 1, ease: "power1.out", autoAlpha: 1, zIndex: 100 },
-    0,
-  );
-  const elemento = document.querySelector(".navbar-container") as HTMLElement;
-  let navTween: gsap.core.Tween | null = null;
-  ScrollTrigger.create({
-    start: `top -100`,
-    onUpdate: (self) => {
-      if (navTween) navTween.kill();
-      if (self.direction === 1) {
-        navTween = gsap.to(elemento, {
-          yPercent: -100,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      } else if (self.direction === -1) {
-        navTween = gsap.to(elemento, {
-          yPercent: 0,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      }
-    },
-  });
-
-  // ---------- animacion de mi persona
-  const meImagesTl = gsap.timeline({ repeat: -1, delay: 3 });
-
-  meImagesTl
-    .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
-    .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
-    // Animación de balanceo
-    .to(
-      ".me-waving",
-      { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
-      0.1,
-    )
-    .to(
-      ".me-waving",
-      { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
-      0.4,
-    )
-    .to(
-      ".me-waving",
-      { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
-      0.7,
-    )
-    // Segunda imagen: .me-playing
-    .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
-    .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
-    // Animación de salto
-    .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
-    .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
-
-    // Tercera imagen: .me-coding
-    .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
-    .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
-    // Animación de zoom
-    .to(".me-coding", { scale: 1.05, duration: 0.2, ease: "power1.inOut" }, 4.1)
-    .to(".me-coding", { scale: 1, duration: 0.3, ease: "power1.inOut" }, 4.3)
-    // Pausa para la última imagen
-    .to({}, { duration: 2 }, 5);
-
-  let isAnimating = false; // Variable para controlar el estado de la animación
-  let mm = gsap.matchMedia();
-  mm.add(
-    {
-      isMobile: "(max-width: 767px)",
-      isDesktop: "(min-width: 768px)",
-    },
-    (context: any) => {
-      let { isMobile, isDesktop } = context.conditions;
-      const emoji = isMobile
-        ? (document.querySelector(".emoji.mobile") as HTMLElement)
-        : (document.querySelector(".emoji") as HTMLElement);
-
-      if (isDesktop) {
-        // gsap.set(circleContainer, {
-        //   x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
-        // });
-      }
-      const initialAnimation = gsap.timeline({
-        paused: true,
-        defaults: { ease: "power1.inOut" },
-        onComplete: () => {
-          // Aquí agregas el listener solo cuando termina toda la animación inicial
-
-          emoji.addEventListener("mouseenter", () => {
-            if (!isAnimating) {
-              gsap.to(".emoji", {
-                rotation: 20,
-                duration: 0.5,
-                yoyo: true,
-                repeat: 3,
-                transformOrigin: "bottom right",
-                ease: "power1.inOut",
-                onStart: () => {
-                  isAnimating = true;
-                },
-                onComplete: () => {
-                  isAnimating = false;
-                },
-              });
-            }
-          });
+          start: "top center",
+          end: "bottom center",
+          toggleActions: "restart none restart reverse",
         },
       });
-      initialAnimation
-        .set(emoji, {
-          top: "50%",
-          left: "50%",
-          transform: "translate(50%, 50%) scale(4)",
-          position: "absolute",
-          transformOrigin: "bottom right",
+      gsap.to("html", {
+        "--button-color": "rgba(230, 230, 85, 0.26)",
+        "--button-color-hover": "rgba(230, 230, 85)",
+        scrollTrigger: {
+          trigger: ".section-3",
+          start: "top center",
+          end: "bottom center",
+          toggleActions: "restart none restart none",
+        },
+      });
+      gsap.to("html", {
+        "--button-color": "#59272759",
+        "--button-color-hover": "#592727ff",
+        scrollTrigger: {
+          trigger: ".section-4",
+          start: "top center",
+          end: "bottom center",
+          toggleActions: "restart none none none",
+        },
+      });
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: ".section-2",
+            start: "top bottom",
+            end: "top top",
+            scrub: 1,
+          },
         })
-        .to(emoji, {
-          opacity: 1,
-          duration: 0.9,
+        .to(circleContainer, {
+          x: centerX,
+          y: centerY,
+          ease: "none",
         })
-        .to(emoji, {
-          rotation: 20,
-          yoyo: true,
-          repeat: 3,
-          duration: 0.5,
+        .to(
+          ".circle",
+          {
+            backgroundColor: "rgba(128, 0, 128, 0.50)",
+          },
+          0,
+        );
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: ".section-3",
+            start: "top bottom",
+            end: "top top",
+            scrub: 1,
+          },
         })
-        .to(emoji, {
-          top: "auto",
-          left: "auto",
-          x: isMobile ? 98.295 : 98.5,
-          transform: "translate(0%, 0%)",
-          scale: 1,
-          duration: 0.5,
-          delay: 0.5,
+        .to(circleContainer, {
+          x: 0,
+          y: bottomY,
+          ease: "none",
         })
-        .to(".black-screen", {
-          zIndex: -1,
-          autoAlpha: 0,
-          duration: 0.5,
+        .to(
+          ".circle",
+          {
+            backgroundColor: "rgba(230, 230, 85, 0.26)",
+          },
+          0,
+        );
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: ".section-4",
+            start: "top bottom",
+            end: "top top",
+            scrub: 1,
+          },
         })
-        .set("body", { overflowY: "auto" })
-        .fromTo(
+        .to(circleContainer, {
+          x: bottomRight,
+          y: bottomY,
+          ease: "none",
+        })
+        .to(
+          ".circle",
+          {
+            backgroundColor: "rgba(255, 86, 86, 0.27)",
+          },
+          0,
+        );
+
+      // ---------- animacion de la navbar
+      gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
+      gsap.to(".navbar-container", {
+        y: 0,
+        duration: 1,
+        ease: "power1.out",
+        autoAlpha: 1,
+        zIndex: 100,
+        delay: isFirstLoad ? 3.5 : 0,
+      });
+      const elemento = document.querySelector(
+        ".navbar-container",
+      ) as HTMLElement;
+      let navTween: gsap.core.Tween | null = null;
+      ScrollTrigger.create({
+        start: `top -100`,
+        onUpdate: (self) => {
+          if (navTween) navTween.kill();
+          if (self.direction === 1) {
+            navTween = gsap.to(elemento, {
+              yPercent: -100,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          } else if (self.direction === -1) {
+            navTween = gsap.to(elemento, {
+              yPercent: 0,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+        },
+      });
+
+      // ---------- animacion de mi persona
+      const meImagesTl = gsap.timeline({
+        repeat: -1,
+        delay: isFirstLoad ? 3 : 0,
+      });
+
+      meImagesTl
+        .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
+        .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
+        // Animación de balanceo
+        .to(
+          ".me-waving",
+          { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
+          0.1,
+        )
+        .to(
+          ".me-waving",
+          { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
+          0.4,
+        )
+        .to(
+          ".me-waving",
+          { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
+          0.7,
+        )
+        // Segunda imagen: .me-playing
+        .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
+        .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
+        // Animación de salto
+        .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
+        .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+
+        // Tercera imagen: .me-coding
+        .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
+        .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
+        // Animación de zoom
+        .to(
+          ".me-coding",
+          { scale: 1.05, duration: 0.2, ease: "power1.inOut" },
+          4.1,
+        )
+        .to(
+          ".me-coding",
+          { scale: 1, duration: 0.3, ease: "power1.inOut" },
+          4.3,
+        )
+        // Pausa para la última imagen
+        .to({}, { duration: 2 }, 5);
+
+      if (isFirstLoad) {
+        // ---------- intro completa (solo primera carga)
+        let isAnimating = false; // Variable para controlar el estado de la animación
+        let mm = gsap.matchMedia();
+        mm.add(
+          {
+            isMobile: "(max-width: 767px)",
+            isDesktop: "(min-width: 768px)",
+          },
+          (context: any) => {
+            let { isMobile, isDesktop } = context.conditions;
+            const emoji = isMobile
+              ? (document.querySelector(".emoji.mobile") as HTMLElement)
+              : (document.querySelector(".emoji") as HTMLElement);
+
+            if (isDesktop) {
+              // gsap.set(circleContainer, {
+              //   x: normalDistance < maxDistance ? -normalDistance : -maxDistance,
+              // });
+            }
+            const initialAnimation = gsap.timeline({
+              paused: true,
+              defaults: { ease: "power1.inOut" },
+              onComplete: () => {
+                // Aquí agregas el listener solo cuando termina toda la animación inicial
+
+                emoji.addEventListener("mouseenter", () => {
+                  if (!isAnimating) {
+                    gsap.to(".emoji", {
+                      rotation: 20,
+                      duration: 0.5,
+                      yoyo: true,
+                      repeat: 3,
+                      transformOrigin: "bottom right",
+                      ease: "power1.inOut",
+                      onStart: () => {
+                        isAnimating = true;
+                      },
+                      onComplete: () => {
+                        isAnimating = false;
+                      },
+                    });
+                  }
+                });
+              },
+            });
+            initialAnimation
+              .set(emoji, {
+                top: "50%",
+                left: "50%",
+                transform: "translate(50%, 50%) scale(4)",
+                position: "absolute",
+                transformOrigin: "bottom right",
+              })
+              .to(emoji, {
+                opacity: 1,
+                duration: 0.9,
+              })
+              .to(emoji, {
+                rotation: 20,
+                yoyo: true,
+                repeat: 3,
+                duration: 0.5,
+              })
+              .to(emoji, {
+                top: "auto",
+                left: "auto",
+                x: isMobile ? 98.295 : 98.5,
+                transform: "translate(0%, 0%)",
+                scale: 1,
+                duration: 0.5,
+                delay: 0.5,
+              })
+              .to(".black-screen", {
+                zIndex: -1,
+                autoAlpha: 0,
+                duration: 0.5,
+              })
+              .set("body", { overflowY: "auto" })
+              .fromTo(
+                ".right-side__button-container",
+                {
+                  y: 20,
+                  opacity: 0, // Animamos desde opacity: 0
+                },
+                {
+                  duration: 1,
+                  stagger: 0.15,
+                  y: 0,
+                  opacity: 1,
+                  ease: "sine.out",
+                },
+              );
+
+            // Ejecutar la animación inicial una vez que la página haya cargado completamente
+            if (typeof window !== "undefined") {
+              initialAnimation.play();
+            }
+          },
+        );
+      } else {
+        // ---------- entrada rapida al navegar
+        document.body.style.overflowY = "auto";
+        gsap.fromTo(
           ".right-side__button-container",
           {
             y: 20,
@@ -555,16 +492,15 @@ const l = lang;
             ease: "sine.out",
           },
         );
-
-      // Ejecutar la animación inicial una vez que la página haya cargado completamente
-      if (typeof window !== "undefined") {
-        initialAnimation.play();
-        // window.addEventListener("load", () => {
-        //   ScrollTrigger.refresh();
-        // });
+        gsap.to(".black-screen", {
+          zIndex: -1,
+          autoAlpha: 0,
+          duration: 0.5,
+        });
       }
-    },
-  );
+    });
+    isFirstLoad = false;
+  }
 </script>
 <style>
   /* :root {
