@@ -169,31 +169,118 @@ const l = lang;
 
   let ctx: gsap.Context | undefined;
   let isFirstLoad = true;
+  let circleTl: gsap.core.Timeline | undefined;
+  let activeBuildCircle: (() => void) | undefined;
 
-  document.addEventListener("astro:before-swap", () => ctx?.revert());
+  document.addEventListener("astro:before-swap", () => {
+    activeBuildCircle = undefined;
+    circleTl?.kill();
+    circleTl = undefined;
+    ctx?.revert();
+  });
 
   document.addEventListener("astro:page-load", () => initPage());
+
+  let resizeTimer: number | undefined;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => activeBuildCircle?.(), 150);
+  });
+
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+
+  function buildCircle() {
+    const circleContainer = document.querySelector(
+      ".circle-container",
+    ) as HTMLElement | null;
+    const circleLayer = document.querySelector(
+      ".circle-layer",
+    ) as HTMLElement | null;
+    if (!circleContainer || !circleLayer) return;
+
+    // Cache layout reads una sola vez por construccion
+    const cachedWidth = circleLayer.clientWidth;
+    const cachedHeight = circleLayer.clientHeight;
+    const containerW = circleContainer.clientWidth;
+    const containerH = circleContainer.clientHeight;
+
+    const centerX = cachedWidth / 2 - containerW / 2;
+    const centerY = cachedHeight / 2 - containerH / 2;
+    const bottomRight = cachedWidth - containerW;
+    const bottomY = cachedHeight - containerH;
+
+    const vh = window.innerHeight;
+    const total = document.documentElement.scrollHeight - vh;
+    if (total <= 0) return;
+    const seg = vh / total;
+    const win = (el: Element | null) => {
+      if (!el) return 0;
+      return (el.getBoundingClientRect().top + window.scrollY - vh) / total;
+    };
+    const s2 = win(document.querySelector(".section-2"));
+    const s3 = win(document.querySelector(".section-3"));
+    const s4 = win(document.querySelector(".section-4"));
+
+    circleTl?.kill();
+    circleTl = gsap.timeline({
+      duration: 1,
+      scrollTrigger: {
+        trigger: document.querySelector("main") || document.body,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+    circleTl
+      .to(
+        circleContainer,
+        { x: centerX, y: centerY, duration: seg, ease: "none" },
+        s2,
+      )
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(128, 0, 128, 0.50)",
+          duration: seg,
+          ease: "power1.out",
+        },
+        s2,
+      )
+      .to(
+        circleContainer,
+        { x: 0, y: bottomY, duration: seg, ease: "none" },
+        s3,
+      )
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(230, 230, 85, 0.26)",
+          duration: seg,
+          ease: "power1.out",
+        },
+        s3,
+      )
+      .to(
+        circleContainer,
+        { x: bottomRight, y: bottomY, duration: seg, ease: "none" },
+        s4,
+      )
+      .to(
+        ".circle",
+        {
+          backgroundColor: "rgba(255, 86, 86, 0.27)",
+          duration: seg,
+          ease: "power1.out",
+        },
+        s4,
+      );
+  }
 
   function initPage() {
     ctx = gsap.context(() => {
       // ---------- circulo y colores
-      const circleContainer = document.querySelector(
-        ".circle-container",
-      ) as HTMLElement;
-      const circleLayer = document.querySelector(
-        ".circle-layer",
-      ) as HTMLElement;
-
-      // Cache layout reads una sola vez, no en cada frame
-      const cachedWidth = circleLayer.clientWidth;
-      const cachedHeight = circleLayer.clientHeight;
-      const containerW = circleContainer.clientWidth;
-      const containerH = circleContainer.clientHeight;
-
-      const centerX = cachedWidth / 2 - containerW / 2;
-      const centerY = cachedHeight / 2 - containerH / 2;
-      const bottomRight = cachedWidth - containerW;
-      const bottomY = cachedHeight - containerH;
+      buildCircle();
 
       gsap.to("html", {
         "--button-color": "rgba(128, 0, 128, 0.50)",
@@ -225,72 +312,6 @@ const l = lang;
           toggleActions: "restart none none none",
         },
       });
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".section-2",
-            start: "top bottom",
-            end: "top top",
-            scrub: 1,
-          },
-        })
-        .to(circleContainer, {
-          x: centerX,
-          y: centerY,
-          ease: "none",
-        })
-        .to(
-          ".circle",
-          {
-            backgroundColor: "rgba(128, 0, 128, 0.50)",
-          },
-          0,
-        );
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".section-3",
-            start: "top bottom",
-            end: "top top",
-            scrub: 1,
-          },
-        })
-        .to(circleContainer, {
-          x: 0,
-          y: bottomY,
-          ease: "none",
-        })
-        .to(
-          ".circle",
-          {
-            backgroundColor: "rgba(230, 230, 85, 0.26)",
-          },
-          0,
-        );
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".section-4",
-            start: "top bottom",
-            end: "top top",
-            scrub: 1,
-          },
-        })
-        .to(circleContainer, {
-          x: bottomRight,
-          y: bottomY,
-          ease: "none",
-        })
-        .to(
-          ".circle",
-          {
-            backgroundColor: "rgba(255, 86, 86, 0.27)",
-          },
-          0,
-        );
 
       // ---------- animacion de la navbar
       gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
@@ -499,6 +520,7 @@ const l = lang;
         });
       }
     });
+    activeBuildCircle = buildCircle;
     isFirstLoad = false;
   }
 </script>
