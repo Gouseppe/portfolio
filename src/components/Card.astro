@@ -109,7 +109,7 @@ const {
     cards: HTMLCollectionOf<HTMLDivElement>,
     slidesCount: number,
   ) {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     let currentIndex = 0;
 
     // Función dinámica para calcular la distancia (Card + Gap)
