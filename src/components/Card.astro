@@ -122,7 +122,6 @@ const {
     };
 
     function start() {
-      console.log("Starting Carousel...");
       interval = setInterval(() => {
         // validar si tiene la clase last, si la tiene, quitarla
         if (dialogContent_slides.classList.contains("last")) {
@@ -132,7 +131,6 @@ const {
 
         // Si llegamos a la última tarjeta, reiniciamos el contador a 0
         if (currentIndex > slidesCount) {
-          console.log("Reiniciando Carousel...");
           currentIndex = 1;
         }
 
@@ -168,7 +166,6 @@ const {
     }
 
     function stop() {
-      console.log("Stopping Carousel...");
       if (interval) {
         clearInterval(interval);
       }
@@ -196,7 +193,6 @@ const {
       const slidesCount = parseInt(
         dialogContent_slides.dataset.slidesCount || "0",
       );
-      console.log(slidesCount);
       const dialogContent = this.querySelector(
         ".dialog-content",
       ) as HTMLDivElement;
@@ -216,7 +212,7 @@ const {
         start();
       });
       cancelButton.addEventListener("click", () => {
-        document.body.style.overflow = "";
+        document.body.style.overflow = "auto";
         dialog.close();
         stop();
       });
