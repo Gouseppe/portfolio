@@ -209,11 +209,15 @@ const {
       viewButton.addEventListener("click", () => {
         document.body.style.overflow = "hidden";
         dialog.showModal();
+        document.dispatchEvent(new CustomEvent("cards:pause"));
         start();
       });
       cancelButton.addEventListener("click", () => {
-        document.body.style.overflow = "auto";
         dialog.close();
+      });
+      dialog.addEventListener("close", () => {
+        document.body.style.overflow = "auto";
+        document.dispatchEvent(new CustomEvent("cards:resume"));
         stop();
       });
       onlyBackgroundButton.addEventListener("click", () => {
