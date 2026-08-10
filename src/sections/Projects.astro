@@ -55,6 +55,27 @@ const l = lang;
       desactive: () => {},
     };
 
+    // Estado del drag y del auto-scroll compartido a nivel de módulo
+    let isPaused = false;
+    let isDragging = false;
+    let startX = 0;
+    let actualvalue = 0;
+    let movedCount = 0;
+    let dragInterval: ReturnType<typeof setInterval> | undefined;
+    let projectsEl: HTMLDivElement | null = null;
+    let projectsWrapperEl: HTMLDivElement | null = null;
+
+    // Eventos custom despachados por Card.astro cuando se abre/cierra el dialog
+    document.addEventListener("cards:pause", () => {
+      isPaused = true;
+      idleAnimation.desactive();
+    });
+
+    document.addEventListener("cards:resume", () => {
+      isPaused = false;
+      idleAnimation.active();
+    });
+
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         idleAnimation.desactive(); // pausa: clearInterval
@@ -69,6 +90,80 @@ const l = lang;
       idleAnimation.desactive(); // Detenemos la animación automática al cambiar de página
     });
 
+    // mousemove/mouseup a nivel de document (registrados una sola vez): el drag
+    // y su snap funcionan aunque se suelte el mouse fuera del wrapper
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging || !projectsWrapperEl || !projectsEl) return;
+
+      e.preventDefault(); // Evitamos selección de texto accidental
+      const x = e.pageX - projectsWrapperEl.offsetLeft;
+      const walk = x - startX + actualvalue; // Distancia recorrida
+      // Aplicamos el movimiento
+      projectsEl.style.transform = `translateX(${walk}px)`;
+      console.log("mouse move, walk:", walk);
+    });
+
+    document.addEventListener("mouseup", (e) => {
+      console.log("moved count:", movedCount);
+      if (!isDragging || !projectsWrapperEl || !projectsEl) return;
+      console.log("mouse up");
+      projectsWrapperEl.style.cursor = "grab";
+      projectsEl.classList.add("up");
+      isDragging = false;
+      projectsWrapperEl.classList.remove("active");
+      const x = e.pageX - projectsWrapperEl.offsetLeft;
+      actualvalue = x - startX + actualvalue; // Actualizamos el valor actual al soltar el mouse
+      const projectsRect = projectsEl.getBoundingClientRect();
+      const { left, right, width } = projectsWrapperEl.getBoundingClientRect();
+      // calculamos el desfase (offset) relativo a la posición del contenedor de las cards, esto nos ayuda a saber cuanto se ha movido el contenedor de las cards respecto al contenedor del wrapper, para que en caso de no estar alineado a la izquierda aplicar el transform, basicamente un snap
+      const relativeProjectOffset =
+        (projectsRect.left - left) % DISTANCE_BETWEEN_CARDS;
+      const rightDistance = right - projectsRect.right;
+      const leftDistance = projectsRect.left - left;
+      // Si el contenedor de las cards se ha movido más a la derecha de lo permitido, hacemos un snap a la derecha
+      if (rightDistance > 0) {
+        const value = projectsRect.width - width;
+        projectsEl.style.transform = `translateX(${-value}px)`;
+        console.log("pasar a derecha:", -value);
+        actualvalue = -value;
+        movedCount = projectsEl.children.length - 5; //el 4 representa el numero de cards visibles, esto es para que al llegar a la ultima card visible vuelva a la primera card
+
+        return;
+      }
+      // Si el contenedor de las cards se ha movido más a la izquierda de lo permitido, hacemos un snap a la izquierda
+      if (leftDistance > 0) {
+        console.log("pasar a cero");
+        projectsEl.style.transform = `translateX(${0}px)`;
+        actualvalue = 0;
+        movedCount = 0;
+        return;
+      }
+      if (relativeProjectOffset !== 0) {
+        if (Math.abs(relativeProjectOffset) >= DISTANCE_BETWEEN_CARDS / 2) {
+          const value = -DISTANCE_BETWEEN_CARDS - relativeProjectOffset;
+          projectsEl.style.transform = `translateX(${actualvalue + value}px)`;
+          movedCount =
+            (actualvalue < 0 ? 1 : -1) *
+            Math.abs((value + actualvalue) / DISTANCE_BETWEEN_CARDS); // Incrementamos o decrementamos movedCount según la dirección del movimiento
+          console.log(
+            "calculo:",
+
+            value + actualvalue,
+          );
+          actualvalue = actualvalue + value;
+          return;
+        }
+        movedCount =
+          (actualvalue < 0 ? 1 : -1) *
+          Math.abs(
+            actualvalue - relativeProjectOffset / DISTANCE_BETWEEN_CARDS,
+          );
+        projectsEl.style.transform = `translateX(${actualvalue - relativeProjectOffset}px)`;
+        console.log("el relativeProjectOffset es:", relativeProjectOffset);
+        actualvalue = actualvalue - relativeProjectOffset;
+      }
+    });
+
     document.addEventListener("astro:page-load", () => {
       // es el contenedor de las cards es el que se mueve con el mouse, es el que tiene el transform
       const projects = document.querySelector(".projects") as HTMLDivElement;
@@ -77,51 +172,52 @@ const l = lang;
         ".projects-wrapper",
       ) as HTMLDivElement;
 
-      let isDragging = false; // Bandera para saber si estamos arrastrando
-      let startX = 0; // Posición inicial del mouse
-      let actualvalue = 0; // Valor actual del transform
+      projectsEl = projects;
+      projectsWrapperEl = projectsWrapper;
+      isPaused = false;
+      isDragging = false;
+      actualvalue = 0;
+      movedCount = 0;
 
-      let movedCcount = 0;
       // animacion automatica de desplazamiento secuencial de las cards que deje de ejecutarse si el usuario no esta viendo
-      const highOrderFunction = () => {
-        let interval: ReturnType<typeof setInterval> | undefined;
-
-        const active = () => {
-          interval && clearInterval(interval);
-          interval = setInterval(() => {
-            console.log("moved");
-            actualvalue -= DISTANCE_BETWEEN_CARDS;
-            projects.style.transform = `translateX(${actualvalue}px)`;
-            movedCcount++;
-            if (
-              movedCcount ===
-              projects.children.length - 4 //el 4 representa el numero de cards visibles, esto es para que al llegar a la ultima card visible vuelva a la primera card
-            ) {
-              projects.style.transform = `translateX(0px)`;
-              actualvalue = 0;
-              movedCcount = 0;
-            }
-          }, 2000);
-        };
-
-        const desactive = () => clearInterval(interval);
-        return {
-          active,
-          desactive,
-        };
+      const active = () => {
+        dragInterval && clearInterval(dragInterval);
+        dragInterval = setInterval(() => {
+          console.log("moved");
+          actualvalue -= DISTANCE_BETWEEN_CARDS;
+          projects.style.transform = `translateX(${actualvalue}px)`;
+          movedCount++;
+          console.log("moved count:", movedCount);
+          if (
+            movedCount ===
+            projects.children.length - 4 //el 4 representa el numero de cards visibles, esto es para que al llegar a la ultima card visible vuelva a la primera card
+          ) {
+            projects.style.transform = `translateX(0px)`;
+            actualvalue = 0;
+            movedCount = 0;
+          }
+        }, 2000);
       };
 
-      idleAnimation = highOrderFunction();
+      const desactive = () => clearInterval(dragInterval);
+      idleAnimation = { active, desactive };
       idleAnimation.active();
+
       projectsWrapper.addEventListener("mouseleave", () => {
+        if (isPaused) return;
         idleAnimation.active(); // Reanudamos la animación automática al salir el mouse del contenedor
       });
 
       projectsWrapper.addEventListener("mouseover", () => {
+        if (isPaused) return;
         idleAnimation.desactive(); // Detenemos la animación automática al pasar el mouse por encima
       });
 
       projectsWrapper.addEventListener("mousedown", (e) => {
+        console.log("move count:", movedCount);
+        if (isPaused) return;
+        // Ignoramos el drag si el clic nace en un botón (ej. el botón "ver" de la card)
+        if ((e.target as HTMLElement | null)?.closest("button")) return;
         console.log("mouse down");
         idleAnimation.desactive(); // Detenemos la animación automática al hacer clic
         projects.classList.remove("up");
@@ -130,63 +226,8 @@ const l = lang;
         // Guardamos la posición inicial del mouse
         startX = e.pageX - projectsWrapper.offsetLeft;
 
-        // Si usas transform, aquí deberías extraer el valor actual
-        // pero es más eficiente usar scroll o una variable de estado
-
         projectsWrapper.classList.add("active"); // Opcional: para cambiar el cursor a 'grabbing'
         projectsWrapper.style.cursor = "grabbing";
-      });
-
-      projectsWrapper.addEventListener("mouseup", (e) => {
-        console.log("mouse up");
-        projectsWrapper.style.cursor = "grab";
-        projects.classList.add("up");
-        isDragging = false;
-        projectsWrapper.classList.remove("active");
-        const x = e.pageX - projectsWrapper.offsetLeft;
-        actualvalue = x - startX + actualvalue; // Actualizamos el valor actual al soltar el mouse
-        const projectsRect = projects.getBoundingClientRect();
-        const { left, right, width } = projectsWrapper.getBoundingClientRect();
-        // calculamos el desfase (offset) relativo a la posición del contenedor de las cards, esto nos ayuda a saber cuanto se ha movido el contenedor de las cards respecto al contenedor del wrapper, para que en caso de no estar alineado a la izquierda aplicar el transform, basicamente un snap
-        const relativeProjectOffset =
-          (projectsRect.left - left) % DISTANCE_BETWEEN_CARDS;
-        const rightDistance = right - projectsRect.right;
-        const leftDistance = projectsRect.left - left;
-        // Si el contenedor de las cards se ha movido más a la derecha de lo permitido, hacemos un snap a la derecha
-        if (rightDistance > 0) {
-          const value = projectsRect.width - width;
-          projects.style.transform = `translateX(${-value}px)`;
-          actualvalue = -value;
-          return;
-        }
-        // Si el contenedor de las cards se ha movido más a la izquierda de lo permitido, hacemos un snap a la izquierda
-        if (leftDistance > 0) {
-          console.log("pasar a cero");
-          projects.style.transform = `translateX(${0}px)`;
-          actualvalue = 0;
-          return;
-        }
-        if (relativeProjectOffset !== 0) {
-          if (Math.abs(relativeProjectOffset) >= DISTANCE_BETWEEN_CARDS / 2) {
-            const value = -DISTANCE_BETWEEN_CARDS - relativeProjectOffset;
-            projects.style.transform = `translateX(${actualvalue + value}px)`;
-            actualvalue = actualvalue + value;
-            return;
-          }
-          projects.style.transform = `translateX(${actualvalue - relativeProjectOffset}px)`;
-          actualvalue = actualvalue - relativeProjectOffset;
-        }
-      });
-
-      projectsWrapper.addEventListener("mousemove", (e) => {
-        if (!isDragging) return; // Si no hay click presionado, no hacemos nada
-
-        e.preventDefault(); // Evitamos selección de texto accidental
-        const x = e.pageX - projectsWrapper.offsetLeft;
-        const walk = x - startX + actualvalue; // Distancia recorrida
-        // Aplicamos el movimiento
-        projects.style.transform = `translateX(${walk}px)`;
-        console.log("mouse move, walk:", walk);
       });
     });
   </script>
