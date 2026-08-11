@@ -156,7 +156,7 @@ const l = lang;
         movedCount =
           (actualvalue < 0 ? 1 : -1) *
           Math.abs(
-            actualvalue - relativeProjectOffset / DISTANCE_BETWEEN_CARDS,
+            (actualvalue - relativeProjectOffset) / DISTANCE_BETWEEN_CARDS,
           );
         projectsEl.style.transform = `translateX(${actualvalue - relativeProjectOffset}px)`;
         console.log("el relativeProjectOffset es:", relativeProjectOffset);
