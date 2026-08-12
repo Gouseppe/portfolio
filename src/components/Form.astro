@@ -264,6 +264,7 @@ const l = lang;
   /* Form wrapper con filtro drop-shadow continuo que calza con el clip-path */
   .form-wrapper {
     filter: drop-shadow(0 0 25px rgba(11, 30, 58, 0.158));
+    width: 480px; /* Ancho exacto y fijo en escritorio */
   }
 
   @media (min-width: 600px) and (max-width: 900px) {
@@ -274,7 +275,8 @@ const l = lang;
 
   @media (max-width: 599px) {
     .form-wrapper {
-      width: 340px; /* Ancho exacto y fijo en móvil */
+      width: 100%; /* Fluido hasta el ancho exacto del móvil */
+      max-width: 340px;
     }
   }
 

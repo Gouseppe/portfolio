@@ -1,6 +1,7 @@
 ---
 import { textPage } from "@/store/textPage";
 import Button from "./Button.astro";
+import { Home, User, Briefcase, Mail } from "@lucide/astro";
 interface Props {
   lang: "es" | "en";
 }
@@ -16,42 +17,50 @@ const l = lang;
       text={t.nav.home[l]}
       ariaLabel={t.nav.home[l]}
       link="#hero"
-      iconPosition="right"
+      iconPosition="left"
       target="_self"
       width="auto"
-    />
+    >
+      <Home size={20} />
+    </Button>
   </li>
   <li class="navbar__item">
     <Button
       text={t.nav.about[l]}
       ariaLabel={t.nav.about[l]}
       link="#about"
-      iconPosition="right"
+      iconPosition="left"
       target="_self"
       width="auto"
-    />
+    >
+      <User size={20} />
+    </Button>
   </li>
   <li class="navbar__item">
     <Button
       text={t.nav.projects[l]}
       ariaLabel={t.nav.projects[l]}
       link="#projects"
-      iconPosition="right"
+      iconPosition="left"
       target="_self"
       width="auto"
-    />
+    >
+      <Briefcase size={20} />
+    </Button>
   </li>
   <li class="navbar__item">
     <Button
       text={t.nav.contact[l]}
       ariaLabel={t.nav.contact[l]}
       link="#contact"
-      iconPosition="right"
+      iconPosition="left"
       target="_self"
       width="auto"
-    />
+    >
+      <Mail size={20} />
+    </Button>
   </li>
-  <li class="navbar__item">
+  <li class="navbar__item navbar__item--lang">
     <Button
       text="ES"
       link="/es/"
@@ -62,7 +71,7 @@ const l = lang;
       ariaLabel="ES"
     />
   </li>
-  <li class="navbar__item">
+  <li class="navbar__item navbar__item--lang">
     <Button
       text="EN"
       link="/en/"
@@ -93,5 +102,56 @@ const l = lang;
   }
   .navbar__item {
     list-style: none;
+  }
+
+  :global(.navbar__item .icon) {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .navbar {
+      width: 100%;
+      max-width: 420px;
+      margin-inline: auto;
+      gap: 4px;
+      padding: 8px 12px;
+    }
+
+    .navbar__item {
+      flex: 1;
+      min-width: 0;
+    }
+
+    :global(.navbar__item .button) {
+      width: 100% !important;
+      height: 44px;
+      padding: 6px !important;
+    }
+
+    :global(.navbar__item .content .medium) {
+      display: none;
+    }
+
+    :global(.navbar__item--lang .content .medium) {
+      display: inline;
+      font-size: 0.95rem;
+    }
+
+    :global(.navbar__item .icon) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .navbar {
+      gap: 2px;
+      padding-inline: 10px;
+    }
+
+    :global(.navbar__item .button) {
+      padding: 4px !important;
+    }
   }
 </style>

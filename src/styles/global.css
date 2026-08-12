@@ -12,6 +12,7 @@
   --font-subtitle: 2rem;
   --font-title: 3rem;
   --thumb-color: #151515; /* Color inicial */
+  --page-gutter: clamp(1.25rem, 4vw, 4rem); /* Canaleta horizontal / margen de página */
 }
 html {
   scroll-behavior: smooth;
@@ -78,13 +79,12 @@ body{
 }
 
 /* Utility containers used by pages */
-section{width:100%;max-width:1300px;padding:10px;}
+section{width:100%;max-width:1300px;}
 
 .section {
   width: 100%;
   min-height: 100vh;
   max-width: 1300px;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;

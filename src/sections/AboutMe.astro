@@ -114,6 +114,7 @@ const l = lang;
   }
   p {
     text-align: left;
+    line-height: 1.6;
     margin-bottom: 1rem;
   }
 
@@ -141,6 +142,9 @@ const l = lang;
   .floating {
     text-align: left;
   }
+  .sub-title {
+    margin-top: 1.5rem;
+  }
 
   .float-image.uno {
     float: right;
@@ -164,12 +168,16 @@ const l = lang;
   @media (max-width: 900px) {
     .content-wrapper {
       flex-direction: column;
+      gap: 40px;
     }
-    /* .float-image.uno,
+    .float-image.uno,
     .float-image.dos {
       float: none;
       display: block;
       margin: 0 auto 16px auto;
-    } */
+    }
+    .title-wrapper {
+      margin-bottom: 1.5rem;
+    }
   }
 </style>

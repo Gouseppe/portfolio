@@ -178,6 +178,7 @@ const l = lang;
       "userAgentData" in navigator &&
       typeof (navigator as any).userAgentData.mobile === "boolean"
     ) {
+      // alert("userAgentData: " + (navigator as any).userAgentData.mobile);
       return (navigator as any).userAgentData.mobile;
     }
 
@@ -185,10 +186,12 @@ const l = lang;
     const patronMovil =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
     if (patronMovil.test(navigator.userAgent)) {
+      // alert("mobile: true");
       return true;
     }
 
     // 3. Apoyo secundario por puntos de contacto táctil
+    // alert("maxTouchPoints: " + navigator.maxTouchPoints);
     return navigator.maxTouchPoints > 1;
   }
 
@@ -210,6 +213,7 @@ const l = lang;
   window.addEventListener("load", () => ScrollTrigger.refresh());
 
   function buildCircle() {
+    // alert("buildCircle");
     const circleContainer = document.querySelector(
       ".circle-container",
     ) as HTMLElement | null;
@@ -301,6 +305,7 @@ const l = lang;
     ctx = gsap.context(() => {
       // ---------- circulo y colores
       !isMobile() && buildCircle();
+      // isMobile() && document.querySelector(".circle-container")?.remove();
 
       gsap.to("html", {
         "--button-color": "rgba(128, 0, 128, 0.50)",
@@ -535,7 +540,7 @@ const l = lang;
         });
       }
     });
-    activeBuildCircle = buildCircle;
+    activeBuildCircle = isMobile() ? undefined : buildCircle;
     isFirstLoad = false;
   }
 </script>
@@ -587,6 +592,7 @@ const l = lang;
   .section-4,
   .section-5 {
     width: 100%;
+    padding: 2.5rem var(--page-gutter);
     display: flex;
     justify-content: center;
   }
@@ -600,7 +606,7 @@ const l = lang;
     font-size: 1.5rem;
     text-align: center;
 
-    padding: 10px;
+    padding: 2.5rem var(--page-gutter);
   }
 
   .hero {
@@ -705,7 +711,7 @@ const l = lang;
       flex-direction: column-reverse;
       overflow: hidden;
       width: 100%;
-      gap: 0px;
+      gap: 2rem;
       justify-content: center;
     }
     .hero__greeting:not(.mobile) {
@@ -733,9 +739,13 @@ const l = lang;
     }
     .hero__phrase {
       text-align: center;
+      max-width: 36ch;
+      margin-inline: auto;
+      line-height: 1.5;
     }
     .hero__left-side {
       flex: 0;
+      width: 100%;
       gap: 15px;
     }
     .me-images {
