@@ -1,69 +1,86 @@
 ---
 interface Props {
-  iconPosition: "left" | "right";
-  ariaLabel: string;
-  textSize?: "small" | "medium" | "large";
   text?: string;
-  link?: string;
+  textSize?: "small" | "medium" | "large";
+  iconPosition?: "left" | "right" | "none";
+  href?: string;
+  target?: string;
+  rel?: string;
   width?: string;
   borderColor?: string;
-  target?: string;
-  isalink?: boolean;
+  ariaLabel?: string;
+  class?: string;
+  [key: string]: any;
 }
 
-let {
-  iconPosition,
-  ariaLabel,
-  textSize = "medium",
+const {
   text = "",
-  link = "#",
-  width = "76px",
-  borderColor = "1a5ae9",
+  textSize = "medium",
+  iconPosition = "left",
+  href,
   target = "_blank",
-  isalink = true,
+  rel,
+  width,
+  borderColor,
+  ariaLabel,
+  class: className,
+  ...rest
 } = Astro.props;
-const borderColorHover = "#" + borderColor + "ff"; // Agregamos transparencia al color de borde
-borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de borde
+
+const relValue =
+  rel ?? (target === "_blank" ? "noopener noreferrer" : undefined);
+const borderVars = borderColor
+  ? `--button-color: #${borderColor}59; --button-color-hover: #${borderColor}ff;`
+  : undefined;
+const widthStyle = width ? `width: ${width};` : undefined;
 ---
 
-<div
-  class="button-wrapper"
-  style={`--border-color-wrapper: ${borderColor}; --border-color-wrapper-hover: ${borderColorHover};`}
->
+<div class="button-wrapper" style={borderVars}>
   {
-    isalink ? (
+    href ? (
       <a
-        class="button"
-        href={link}
+        {...rest}
+        class:list={["button", className]}
+        style={widthStyle + (rest.style ? rest.style : "")}
+        href={href}
         target={target}
+        rel={relValue}
         aria-label={ariaLabel}
-        style={`width: ${width};`}
       >
         <div class="content">
-          {iconPosition === "left" ? (
+          {iconPosition === "left" && (
             <div class="icon">
               <slot />
             </div>
-          ) : null}
-          {text && <span class={textSize || "medium"}>{text}</span>}
-          {iconPosition === "right" ? <slot /> : null}
+          )}
+          {text && <div class={textSize}>{text}</div>}
+          {iconPosition === "right" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
         </div>
       </a>
     ) : (
       <button
-        class="button"
+        {...rest}
+        class:list={["button", className]}
+        style={widthStyle}
         type="button"
         aria-label={ariaLabel}
-        style={`width: ${width};`}
       >
         <div class="content">
-          {iconPosition === "left" ? (
+          {iconPosition === "left" && (
             <div class="icon">
               <slot />
             </div>
-          ) : null}
-          {text && <span class={textSize}>{text}</span>}
-          {iconPosition === "right" ? <slot /> : null}
+          )}
+          {text && <div class={textSize}>{text}</div>}
+          {iconPosition === "right" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )}
         </div>
       </button>
     )
@@ -71,23 +88,17 @@ borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de b
 </div>
 
 <style>
-  .small {
-    font-size: 1rem;
-  }
-  .medium {
-    font-size: 1.25rem;
-  }
-  .large {
-    font-size: 1.5rem;
-  }
   .button:has(.small) {
     padding: 0.5rem;
+    font-size: 1rem;
   }
   .button:has(.medium) {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
   }
   .button:has(.large) {
     padding: 2rem;
+    font-size: 1.5rem;
   }
   .button {
     display: flex;
@@ -99,6 +110,7 @@ borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de b
     border-radius: 12px;
     background: #151515;
     border: none;
+    cursor: pointer;
     clip-path: polygon(
       10px 0,
       100% 0,
@@ -111,6 +123,10 @@ borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de b
 
     /* box-shadow: 0 3px 11px var(--spread, 5px) #385eb259; */
     transition: box-shadow 0.3s ease-in-out;
+  }
+  .button:focus-visible {
+    outline: 2px solid var(--button-color-hover, #385fb2ff);
+    outline-offset: 3px;
   }
   .button-wrapper {
     padding: 3px;
@@ -126,6 +142,12 @@ borderColor = "#" + borderColor + "59"; // Agregamos transparencia al color de b
     background-color: var(--button-color, #385fb24d);
     border-radius: 12px;
     transition: background-color 0.3s ease-in-out;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .content {
