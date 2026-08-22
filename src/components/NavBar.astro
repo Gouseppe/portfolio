@@ -2,6 +2,7 @@
 import { textPage } from "@/store/textPage";
 import Button from "./Button.astro";
 import { Home, User, Briefcase, Mail } from "@lucide/astro";
+import ExpandableButton from "./ExpandableButton.astro";
 interface Props {
   lang: "es" | "en";
 }
@@ -16,7 +17,7 @@ const l = lang;
     <Button
       text={t.nav.home[l]}
       ariaLabel={t.nav.home[l]}
-      link="#hero"
+      href="#hero"
       iconPosition="left"
       target="_self"
       width="auto"
@@ -28,7 +29,7 @@ const l = lang;
     <Button
       text={t.nav.about[l]}
       ariaLabel={t.nav.about[l]}
-      link="#about"
+      href="#about"
       iconPosition="left"
       target="_self"
       width="auto"
@@ -40,7 +41,7 @@ const l = lang;
     <Button
       text={t.nav.projects[l]}
       ariaLabel={t.nav.projects[l]}
-      link="#projects"
+      href="#projects"
       iconPosition="left"
       target="_self"
       width="auto"
@@ -52,7 +53,7 @@ const l = lang;
     <Button
       text={t.nav.contact[l]}
       ariaLabel={t.nav.contact[l]}
-      link="#contact"
+      href="#contact"
       iconPosition="left"
       target="_self"
       width="auto"
@@ -60,27 +61,25 @@ const l = lang;
       <Mail size={20} />
     </Button>
   </li>
-  <li class="navbar__item navbar__item--lang">
-    <Button
-      text="ES"
-      link="/es/"
-      target="_self"
-      iconPosition="right"
-      width="auto"
-      isalink={true}
-      ariaLabel="ES"
-    />
-  </li>
-  <li class="navbar__item navbar__item--lang">
-    <Button
-      text="EN"
-      link="/en/"
-      target="_self"
-      iconPosition="right"
-      width="auto"
-      isalink={true}
-      ariaLabel="EN"
-    />
+  <li class="navbar__item expandable-button">
+    <ExpandableButton ariaLabel="Más opciones" menuLabel="Más opciones">
+      <Button
+        text="ES"
+        href="/es/"
+        target="_self"
+        width="auto"
+        ariaLabel="ES"
+        iconPosition="none"
+      />
+      <Button
+        text="EN"
+        href="/en/"
+        target="_self"
+        width="auto"
+        ariaLabel="EN"
+        iconPosition="none"
+      />
+    </ExpandableButton>
   </li>
 </ul>
 
@@ -91,14 +90,6 @@ const l = lang;
     align-items: center;
     gap: 16px;
     padding: 8px 0;
-    clip-path: polygon(
-      10px 0,
-      100% 0,
-      100% calc(100% - 10px),
-      calc(100% - 10px) 100%,
-      0 100%,
-      0 10px
-    );
   }
   .navbar__item {
     list-style: none;
@@ -106,6 +97,9 @@ const l = lang;
 
   :global(.navbar__item .icon) {
     display: none;
+  }
+  :global(.expandable-button .icon) {
+    display: block;
   }
 
   @media (max-width: 767px) {
@@ -125,10 +119,10 @@ const l = lang;
     :global(.navbar__item .button) {
       width: 100% !important;
       height: 44px;
-      padding: 6px !important;
+      padding: 1em !important;
     }
 
-    :global(.navbar__item .content .medium) {
+    :global(.navbar__item:not(.expandable-button) .content .medium) {
       display: none;
     }
 
