@@ -1,0 +1,151 @@
+---
+import MorphIcon from "morphicons/astro";
+import Button from "./Button.astro";
+import { Languages } from "lucide";
+interface Props {
+  ariaLabel: string;
+  menuLabel?: string;
+}
+
+const { ariaLabel, menuLabel = "Opciones" } = Astro.props;
+const menuId = `expand-menu-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="expand">
+  <Button
+    ariaLabel={ariaLabel}
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls={menuId}
+    class:list={["expand__toggle"]}
+    iconPosition="left"
+    style={"padding:1em; width:fit-content;"}
+  >
+    <div class="expand__toggle-content">
+      <MorphIcon icon={Languages} size={20} />
+    </div>
+  </Button>
+  <div class="expand__menu" id={menuId} role="menu" aria-label={menuLabel}>
+    <slot />
+  </div>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  import { X, Languages } from "lucide";
+  import type { MorphIconElement } from "morphicons/element";
+
+  let ctx: gsap.Context | undefined;
+
+  const init = () => {
+    ctx?.revert();
+
+    const root = document.querySelector(".expand") as HTMLElement | null;
+    if (!root) return;
+
+    const toggle = root.querySelector(
+      ".expand__toggle",
+    ) as HTMLButtonElement | null;
+    const menu = root.querySelector(".expand__menu") as HTMLElement | null;
+    if (!toggle || !menu) return;
+
+    ctx = gsap.context(() => {
+      const options = Array.from(menu.children);
+      const toggleContent = toggle.querySelector(
+        ".expand__toggle-content",
+      ) as HTMLElement | null;
+
+      gsap.set(menu, { autoAlpha: 0 });
+      gsap.set(options, {
+        y: -16,
+        scaleY: 0,
+        autoAlpha: 0,
+        transformOrigin: "top center",
+      });
+
+      let isOpen = false;
+      let tl: gsap.core.Timeline | null = null;
+
+      const animate = (open: boolean) => {
+        tl?.kill();
+        tl = gsap.timeline();
+        isOpen = open;
+        toggle.setAttribute("aria-expanded", String(open));
+        if (toggleContent) {
+          const icon =
+            toggleContent.querySelector<MorphIconElement>("morph-icon")!;
+          icon.icon = open ? X : Languages;
+        }
+        if (open) {
+          tl.to(menu, { autoAlpha: 1, duration: 0.15 }).to(options, {
+            y: 0,
+            scaleY: 1,
+            autoAlpha: 1,
+            duration: 0.45,
+            stagger: 0.09,
+            ease: "back.out(1.6)",
+            clearProps: "transform",
+          });
+        } else {
+          tl.to(options, {
+            y: -16,
+            scaleY: 0,
+            autoAlpha: 0,
+            duration: 0.25,
+            stagger: 0.05,
+            ease: "power2.in",
+          }).to(menu, { autoAlpha: 0, duration: 0.1 });
+        }
+      };
+
+      toggle.addEventListener("click", () => animate(!isOpen));
+
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && isOpen) animate(false);
+      };
+      document.addEventListener("keydown", onKey);
+
+      const onClickOutside = (e: MouseEvent) => {
+        if (isOpen && !root.contains(e.target as Node)) animate(false);
+      };
+      document.addEventListener("click", onClickOutside);
+
+      return () => {
+        document.removeEventListener("keydown", onKey);
+        document.removeEventListener("click", onClickOutside);
+      };
+    }, root);
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  .expand {
+    position: relative;
+    z-index: 100;
+  }
+  .expand__toggle-content {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    transition: transform 0.3s ease-in-out;
+  }
+  .expand__menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .expand__menu > * {
+    margin: 0;
+  }
+</style>
