@@ -4,7 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 import Circle from "@/components/Circle.astro";
 import Button from "@/components/Button.astro";
 import AboutMe from "@/sections/AboutMe.astro";
-import { textPage } from "@/store/textPage";
+import NavBar from "@/components/NavBar.astro";
 //images
 import { Image } from "astro:assets";
 import presentationImage from "@/assets/presentation-image.webp";
@@ -12,15 +12,18 @@ import meWaving from "@/assets/me-waving.webp";
 import mePlaying from "@/assets/me-playing.webp";
 import meCoding from "@/assets/me-coding.webp";
 //lucide icons
-import { Mail, Linkedin, Github, Download } from "@lucide/astro";
+import { Mail, Download } from "@lucide/astro";
 import Projects from "@/sections/Projects.astro";
 import ContactMe from "@/sections/ContactMe.astro";
-import NavBar from "@/components/NavBar.astro";
+//icons
+import Github from "@/assets/icons/GitHub_Invertocat_White.svg";
+import Linkedin from "@/assets/icons/InBug-White.png";
 
 export async function getStaticPaths() {
   return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
 }
 
+import { textPage } from "@/store/textPage";
 const t = textPage;
 const { lang } = Astro.params as { lang: "es" | "en" };
 const l = lang;
@@ -39,6 +42,33 @@ const l = lang;
       </div>
     </div>
     <div class="section hero section-1" id="home">
+      <!-- <ExpandableButton ariaLabel="Más opciones" menuLabel="Más opciones">
+        <Plus size={20} slot="trigger" />
+        <Button
+          text="Opción 1"
+          ariaLabel="Opción 1"
+          href="#"
+          target="_self"
+          iconPosition="left"
+          width="auto"
+        />
+        <Button
+          text="Opción 2"
+          ariaLabel="Opción 2"
+          href="#"
+          target="_self"
+          iconPosition="left"
+          width="auto"
+        />
+        <Button
+          text="Opción 3"
+          ariaLabel="Opción 3"
+          href="#"
+          target="_self"
+          iconPosition="left"
+          width="auto"
+        />
+      </ExpandableButton> -->
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -57,9 +87,9 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.linkedinAria[l]}
-              link="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
+              href="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
             >
-              <Linkedin width={"100%"} height={"100%"} />
+              <img src={Linkedin.src} width={"100%"} height={"100%"} alt="" />
             </Button>
           </div>
           <div class="right-side__button-container">
@@ -67,7 +97,6 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.githubAria[l]}
-              link="https://github.com/gouseppe"
             >
               <Github width={"100%"} height={"100%"} />
             </Button>
@@ -77,7 +106,7 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.emailAria[l]}
-              link="mailto:gouseppe.dev@gmail.com"
+              href="mailto:gouseppe.dev@gmail.com"
             >
               <Mail width={"100%"} height={"100%"} />
             </Button>
@@ -117,9 +146,9 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.linkedinAria[l]}
-              link="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
+              href="https://www.linkedin.com/in/fernando-guzm%C3%A1n-18177b313/"
             >
-              <Linkedin width={"100%"} height={"100%"} />
+              <img src={Linkedin.src} width={"100%"} height={"100%"} alt="" />
             </Button>
           </div>
           <div class="right-side__button-container">
@@ -127,7 +156,7 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.githubAria[l]}
-              link="https://github.com/gouseppe"
+              href="https://github.com/gouseppe"
             >
               <Github width={"100%"} height={"100%"} />
             </Button>
@@ -137,7 +166,7 @@ const l = lang;
               text=""
               iconPosition="right"
               ariaLabel={t.social.emailAria[l]}
-              link="mailto:gouseppe.dev@gmail.com"
+              href="mailto:gouseppe.dev@gmail.com"
             >
               <Mail width={"100%"} height={"100%"} />
             </Button>
@@ -707,12 +736,16 @@ const l = lang;
     }
   }
   @media (max-width: 767px) {
+    .navbar-container {
+      padding-top: 2vh;
+    }
     .hero {
       flex-direction: column-reverse;
       overflow: hidden;
       width: 100%;
-      gap: 2rem;
+      gap: 1rem;
       justify-content: center;
+      margin-top: 2.5rem;
     }
     .hero__greeting:not(.mobile) {
       display: none;
