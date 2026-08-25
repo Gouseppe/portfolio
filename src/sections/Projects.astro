@@ -2,21 +2,54 @@
 import Card from "../components/Card.astro";
 import { textPage } from "@/store/textPage";
 // img's
+import islaBonita from "@/assets/projects/isla-bonita/isla-bonita-image1.webp";
+import islaBonita2 from "@/assets/projects/isla-bonita/isla-bonita-image2.webp";
+import islaBonita3 from "@/assets/projects/isla-bonita/isla-bonita-image3.webp";
+import islaBonitaCard from "@/assets/projects/isla-bonita/isla-bonita-image-card.png";
+import phylumAi from "@/assets/projects/phylum-ai/phylum-ai-image1.webp";
+import phylumAi2 from "@/assets/projects/phylum-ai/phylum-ai-image2.webp";
+import phylumAi3 from "@/assets/projects/phylum-ai/phylum-ai-image3.webp";
+import phylumAiCard from "@/assets/projects/phylum-ai/phylum-ai-card.png";
+import sise1 from "@/assets/projects/sise/sise-image1.webp";
+import sise2 from "@/assets/projects/sise/sise-image2.webp";
+import sise3 from "@/assets/projects/sise/sise-image3.webp";
+import sise4 from "@/assets/projects/sise/sise-image4.webp";
+import sise5 from "@/assets/projects/sise/sise-image5.webp";
 // svg's
-import project1 from "@/assets/400x600.svg";
 import react from "@/assets/icons/CibReact 1.svg";
 import astro from "@/assets/icons/SimpleIconsAstro 1.svg";
 import typescript from "@/assets/icons/FileIconsTypescript 1.svg";
-import darling1 from "@/assets/darling-in-the-franxx/imagen-1.avif";
-import darling2 from "@/assets/darling-in-the-franxx/imagen-2.png";
-import darling3 from "@/assets/darling-in-the-franxx/imagen-3.jpg";
-import darling4 from "@/assets/darling-in-the-franxx/imagen-4.webp";
 // lucide's icons
 import { FolderTree } from "@lucide/astro";
 interface Props {
   lang: "es" | "en";
 }
-
+const projects = [
+  {
+    title: "Isla Bonita",
+    description: "Description of Project 1",
+    badgeimages: [react, astro, typescript],
+    img: islaBonitaCard,
+    badgeShadowColor: "rgba(230, 230, 85, 0.26)",
+    imgSlides: [islaBonita, islaBonita2, islaBonita3],
+  },
+  {
+    title: "Phylum AI",
+    description: "Description of Project 2",
+    badgeimages: [react, astro, typescript],
+    img: phylumAiCard,
+    badgeShadowColor: "rgba(230, 230, 85, 0.26)",
+    imgSlides: [phylumAi, phylumAi2, phylumAi3],
+  },
+  {
+    title: "SISE",
+    description: "Description of Project 3",
+    badgeimages: [react, astro, typescript],
+    img: sise1,
+    badgeShadowColor: "rgba(230, 230, 85, 0.26)",
+    imgSlides: [sise1, sise2, sise3, sise4, sise5],
+  },
+];
 const t = textPage;
 const { lang } = Astro.props;
 const l = lang;
@@ -28,17 +61,22 @@ const l = lang;
     <h2 class="title">{t.projects.title[l]}</h2>
   </div>
   <p>{t.projects.description[l]}</p>
-  <div class="projects-wrapper">
-    <div class="projects up">
+  <div
+    class="projects-wrapper"
+    role="region"
+    aria-label={t.projects.title[l]}
+    tabindex="0"
+  >
+    <div class="projects">
       {
-        [1, 2, 3, 4, 5, 6, 7, 8].map((e) => (
+        projects.map((project) => (
           <Card
-            title={`${t.projects.card.title[l]} ${e}`}
-            description={`${t.projects.card.description[l]} ${e}`}
-            badgeimages={[react, astro, typescript]}
-            img={project1}
+            title={project.title}
+            description={project.description}
+            badgeimages={project.badgeimages}
+            img={project.img}
             badgeShadowColor="rgba(230, 230, 85, 0.26)"
-            imgSlides={[darling1, darling2, darling3, darling4]}
+            imgSlides={project.imgSlides}
           />
         ))
       }
@@ -46,188 +84,188 @@ const l = lang;
   </div>
 
   <script>
-    const DISTANCE_BETWEEN_CARDS = 324; // Ancho de la card + gap, esto es para calcular el snap
-    let idleAnimation: {
-      active: () => void;
-      desactive: () => void;
-    } = {
-      active: () => {},
-      desactive: () => {},
-    };
+    // Carrusel con scroll nativo: el navegador limita el desplazamiento al
+    // contenido real, así el último paso avanza solo lo necesario para mostrar
+    // las cards restantes. En táctil el movimiento es nativo (sin drag
+    // propio); el drag con mouse es una mejora progresiva para puntero fino.
+    let wrapper: HTMLDivElement | null = null;
+    let track: HTMLDivElement | null = null;
+    let stride = 0; // Ancho de card + gap
+    let autoScrollTimer: ReturnType<typeof setInterval> | undefined;
+    let resumeTimer: ReturnType<typeof setTimeout> | undefined;
+    let paused = false;
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
 
-    // Estado del drag y del auto-scroll compartido a nivel de módulo
-    let isPaused = false;
-    let isDragging = false;
-    let startX = 0;
-    let actualvalue = 0;
-    let movedCount = 0;
-    let dragInterval: ReturnType<typeof setInterval> | undefined;
-    let projectsEl: HTMLDivElement | null = null;
-    let projectsWrapperEl: HTMLDivElement | null = null;
+    const prefersReducedMotion = () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function maxScroll(): number {
+      return wrapper ? wrapper.scrollWidth - wrapper.clientWidth : 0;
+    }
+
+    function scrollToX(left: number, smooth = true): void {
+      wrapper?.scrollTo({
+        left,
+        behavior: smooth && !prefersReducedMotion() ? "smooth" : "auto",
+      });
+    }
+
+    // Mide la distancia entre cards y activa el modo centrado (.single) cuando
+    // solo cabe una card completa (aunque asome parte de la siguiente)
+    function measure(): void {
+      if (!wrapper || !track) return;
+      const firstCard = track.firstElementChild as HTMLElement | null;
+      if (!firstCard) return;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      stride = firstCard.offsetWidth + gap;
+
+      const single =
+        wrapper.clientWidth >= firstCard.offsetWidth &&
+        wrapper.clientWidth < stride * 2 - gap;
+      wrapper.classList.toggle("single", single);
+      // Padding lateral para que la primera/última card puedan quedar centradas
+      track.style.paddingInline = single
+        ? `${Math.max(0, (wrapper.clientWidth - firstCard.offsetWidth) / 2)}px`
+        : "";
+    }
+
+    // Paso del auto-scroll: avanza una card; si el siguiente paso excede el
+    // final, avanza solo lo que falta; al llegar al final, vuelve al inicio
+    function stepForward(): void {
+      if (!wrapper || !stride) return;
+      const max = maxScroll();
+      if (wrapper.scrollLeft >= max - 1) {
+        scrollToX(0);
+      } else {
+        scrollToX(Math.min(wrapper.scrollLeft + stride, max));
+      }
+    }
+
+    function startAutoScroll(): void {
+      stopAutoScroll();
+      if (!wrapper || paused) return;
+      autoScrollTimer = setInterval(stepForward, 2000);
+    }
+
+    function stopAutoScroll(): void {
+      if (autoScrollTimer !== undefined) clearInterval(autoScrollTimer);
+      autoScrollTimer = undefined;
+    }
+
+    // Snap suave a la card más cercana tras soltar el drag, respetando el
+    // límite derecho real (último paso parcial)
+    function snapToNearest(): void {
+      if (!wrapper || !stride) return;
+      const max = maxScroll();
+      const gridNearest = Math.round(wrapper.scrollLeft / stride) * stride;
+      // El límite derecho también es un punto de snap válido
+      // (replica el comportamiento nativo de scroll-snap en los bordes)
+      const target =
+        Math.abs(max - wrapper.scrollLeft) <
+        Math.abs(gridNearest - wrapper.scrollLeft)
+          ? max
+          : gridNearest;
+      scrollToX(Math.max(0, Math.min(target, max)));
+    }
 
     // Eventos custom despachados por Card.astro cuando se abre/cierra el dialog
     document.addEventListener("cards:pause", () => {
-      isPaused = true;
-      idleAnimation.desactive();
+      paused = true;
+      stopAutoScroll();
     });
 
     document.addEventListener("cards:resume", () => {
-      isPaused = false;
-      idleAnimation.active();
+      paused = false;
+      startAutoScroll();
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
-        idleAnimation.desactive(); // pausa: clearInterval
-        console.log("Page is hidden, animation paused.");
-      } else {
-        idleAnimation.active(); // reanuda: vuelve a arrancar el setInterval
-        console.log("Page is visible, animation resumed.");
+        stopAutoScroll();
+      } else if (!paused) {
+        startAutoScroll();
       }
     });
+
+    window.addEventListener("resize", measure);
 
     document.addEventListener("astro:before-swap", () => {
-      idleAnimation.desactive(); // Detenemos la animación automática al cambiar de página
+      stopAutoScroll();
+      if (resumeTimer !== undefined) clearTimeout(resumeTimer);
+      resumeTimer = undefined;
     });
 
-    // mousemove/mouseup a nivel de document (registrados una sola vez): el drag
-    // y su snap funcionan aunque se suelte el mouse fuera del wrapper
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging || !projectsWrapperEl || !projectsEl) return;
+    // Drag con mouse: solo en dispositivos con puntero fino (escritorio)
+    const canDrag = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
 
-      e.preventDefault(); // Evitamos selección de texto accidental
-      const x = e.pageX - projectsWrapperEl.offsetLeft;
-      const walk = x - startX + actualvalue; // Distancia recorrida
-      // Aplicamos el movimiento
-      projectsEl.style.transform = `translateX(${walk}px)`;
-      console.log("mouse move, walk:", walk);
-    });
+    if (canDrag) {
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging || !wrapper) return;
+        e.preventDefault(); // Evita selección de texto mientras se arrastra
+        wrapper.scrollLeft = dragStartScroll - (e.pageX - dragStartX);
+      });
 
-    document.addEventListener("mouseup", (e) => {
-      console.log("moved count:", movedCount);
-      if (!isDragging || !projectsWrapperEl || !projectsEl) return;
-      console.log("mouse up");
-      projectsWrapperEl.style.cursor = "grab";
-      projectsEl.classList.add("up");
-      isDragging = false;
-      projectsWrapperEl.classList.remove("active");
-      const x = e.pageX - projectsWrapperEl.offsetLeft;
-      actualvalue = x - startX + actualvalue; // Actualizamos el valor actual al soltar el mouse
-      const projectsRect = projectsEl.getBoundingClientRect();
-      const { left, right, width } = projectsWrapperEl.getBoundingClientRect();
-      // calculamos el desfase (offset) relativo a la posición del contenedor de las cards, esto nos ayuda a saber cuanto se ha movido el contenedor de las cards respecto al contenedor del wrapper, para que en caso de no estar alineado a la izquierda aplicar el transform, basicamente un snap
-      const relativeProjectOffset =
-        (projectsRect.left - left) % DISTANCE_BETWEEN_CARDS;
-      const rightDistance = right - projectsRect.right;
-      const leftDistance = projectsRect.left - left;
-      // Si el contenedor de las cards se ha movido más a la derecha de lo permitido, hacemos un snap a la derecha
-      if (rightDistance > 0) {
-        const value = projectsRect.width - width;
-        projectsEl.style.transform = `translateX(${-value}px)`;
-        console.log("pasar a derecha:", -value);
-        actualvalue = -value;
-        movedCount = projectsEl.children.length - 5; //el 4 representa el numero de cards visibles, esto es para que al llegar a la ultima card visible vuelva a la primera card
-
-        return;
-      }
-      // Si el contenedor de las cards se ha movido más a la izquierda de lo permitido, hacemos un snap a la izquierda
-      if (leftDistance > 0) {
-        console.log("pasar a cero");
-        projectsEl.style.transform = `translateX(${0}px)`;
-        actualvalue = 0;
-        movedCount = 0;
-        return;
-      }
-      if (relativeProjectOffset !== 0) {
-        if (Math.abs(relativeProjectOffset) >= DISTANCE_BETWEEN_CARDS / 2) {
-          const value = -DISTANCE_BETWEEN_CARDS - relativeProjectOffset;
-          projectsEl.style.transform = `translateX(${actualvalue + value}px)`;
-          movedCount =
-            (actualvalue < 0 ? 1 : -1) *
-            Math.abs((value + actualvalue) / DISTANCE_BETWEEN_CARDS); // Incrementamos o decrementamos movedCount según la dirección del movimiento
-          console.log(
-            "calculo:",
-
-            value + actualvalue,
-          );
-          actualvalue = actualvalue + value;
-          return;
-        }
-        movedCount =
-          (actualvalue < 0 ? 1 : -1) *
-          Math.abs(
-            (actualvalue - relativeProjectOffset) / DISTANCE_BETWEEN_CARDS,
-          );
-        projectsEl.style.transform = `translateX(${actualvalue - relativeProjectOffset}px)`;
-        console.log("el relativeProjectOffset es:", relativeProjectOffset);
-        actualvalue = actualvalue - relativeProjectOffset;
-      }
-    });
+      document.addEventListener("mouseup", () => {
+        if (!dragging || !wrapper) return;
+        dragging = false;
+        wrapper.classList.remove("dragging");
+        snapToNearest();
+      });
+    }
 
     document.addEventListener("astro:page-load", () => {
-      // es el contenedor de las cards es el que se mueve con el mouse, es el que tiene el transform
-      const projects = document.querySelector(".projects") as HTMLDivElement;
-      // es el conetendor del contenerdor de las cards
-      const projectsWrapper = document.querySelector(
+      wrapper = document.querySelector(
         ".projects-wrapper",
-      ) as HTMLDivElement;
+      ) as HTMLDivElement | null;
+      track = document.querySelector(".projects") as HTMLDivElement | null;
+      paused = false;
+      dragging = false;
+      measure();
+      startAutoScroll();
+      if (!wrapper) return;
 
-      projectsEl = projects;
-      projectsWrapperEl = projectsWrapper;
-      isPaused = false;
-      isDragging = false;
-      actualvalue = 0;
-      movedCount = 0;
-
-      // animacion automatica de desplazamiento secuencial de las cards que deje de ejecutarse si el usuario no esta viendo
-      const active = () => {
-        dragInterval && clearInterval(dragInterval);
-        dragInterval = setInterval(() => {
-          console.log("moved");
-          actualvalue -= DISTANCE_BETWEEN_CARDS;
-          projects.style.transform = `translateX(${actualvalue}px)`;
-          movedCount++;
-          console.log("moved count:", movedCount);
-          if (
-            movedCount ===
-            projects.children.length - 4 //el 4 representa el numero de cards visibles, esto es para que al llegar a la ultima card visible vuelva a la primera card
-          ) {
-            projects.style.transform = `translateX(0px)`;
-            actualvalue = 0;
-            movedCount = 0;
-          }
-        }, 2000);
-      };
-
-      const desactive = () => clearInterval(dragInterval);
-      idleAnimation = { active, desactive };
-      idleAnimation.active();
-
-      projectsWrapper.addEventListener("mouseleave", () => {
-        if (isPaused) return;
-        idleAnimation.active(); // Reanudamos la animación automática al salir el mouse del contenedor
+      // Pausa al pasar el mouse por encima, reanuda al salir
+      wrapper.addEventListener("mouseover", () => {
+        if (!paused) stopAutoScroll();
+      });
+      wrapper.addEventListener("mouseleave", () => {
+        if (!paused) startAutoScroll();
       });
 
-      projectsWrapper.addEventListener("mouseover", () => {
-        if (isPaused) return;
-        idleAnimation.desactive(); // Detenemos la animación automática al pasar el mouse por encima
-      });
+      // Táctil: pausa mientras el usuario se desplaza con el dedo
+      wrapper.addEventListener(
+        "touchstart",
+        () => {
+          if (!paused) stopAutoScroll();
+        },
+        { passive: true },
+      );
+      wrapper.addEventListener(
+        "touchend",
+        () => {
+          if (paused) return;
+          if (resumeTimer !== undefined) clearTimeout(resumeTimer);
+          // Pequeño margen para no pelear con el momentum/snap del navegador
+          resumeTimer = setTimeout(startAutoScroll, 800);
+        },
+        { passive: true },
+      );
 
-      projectsWrapper.addEventListener("mousedown", (e) => {
-        console.log("move count:", movedCount);
-        if (isPaused) return;
-        // Ignoramos el drag si el clic nace en un botón (ej. el botón "ver" de la card)
+      if (!canDrag) return;
+      wrapper.addEventListener("mousedown", (e) => {
+        if (!wrapper || paused || dragging) return;
+        // Ignoramos el drag si el clic nace en un botón (ej. el botón "ver")
         if ((e.target as HTMLElement | null)?.closest("button")) return;
-        console.log("mouse down");
-        idleAnimation.desactive(); // Detenemos la animación automática al hacer clic
-        projects.classList.remove("up");
-        isDragging = true;
+        stopAutoScroll();
+        dragging = true;
+        dragStartX = e.pageX;
+        dragStartScroll = wrapper.scrollLeft;
+        wrapper.classList.add("dragging");
         e.preventDefault();
-        // Guardamos la posición inicial del mouse
-        startX = e.pageX - projectsWrapper.offsetLeft;
-
-        projectsWrapper.classList.add("active"); // Opcional: para cambiar el cursor a 'grabbing'
-        projectsWrapper.style.cursor = "grabbing";
       });
     });
   </script>
@@ -239,7 +277,10 @@ const l = lang;
     }
 
     .projects-wrapper {
-      overflow: hidden;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      cursor: grab;
       width: 100%;
       position: relative;
       mask-image: linear-gradient(
@@ -254,18 +295,43 @@ const l = lang;
       );
     }
 
+    .projects-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .projects-wrapper:focus-visible {
+      outline: 1px solid rgba(107, 70, 255, 0.7);
+      outline-offset: 3px;
+    }
+
+    .projects-wrapper.dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      user-select: none;
+    }
+
     .projects {
       display: flex;
-
       gap: 24px;
-      justify-content: center;
       width: max-content;
     }
-    .projects.up {
-      transition: transform 0.3s ease;
-    }
-    .projects > div {
+
+    .projects > :global(astro-card) {
+      display: block;
       flex-shrink: 0;
+      scroll-snap-align: start;
+    }
+
+    /* Táctil: el navegador gestiona el snap de forma nativa */
+    @media (hover: none) {
+      .projects-wrapper {
+        scroll-snap-type: x mandatory;
+      }
+
+      /* Modo centrado: solo hay una card completamente visible */
+      .projects-wrapper.single .projects > :global(astro-card) {
+        scroll-snap-align: center;
+      }
     }
   </style>
 </section>
