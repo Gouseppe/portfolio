@@ -717,12 +717,15 @@ const l = lang;
     z-index: 40;
     opacity: 0;
   }
-  @media (min-width: 768px) {
-    .mobile {
-      display: none;
-    }
+
+  .mobile {
+    display: none;
   }
+
   @media (max-width: 767px) {
+    .mobile {
+      display: block;
+    }
     .navbar-container {
       padding-top: 2vh;
     }
