@@ -299,7 +299,10 @@ const l = lang;
       ) as HTMLElement[];
       const setActiveCircle = (name: string) => {
         circleLayers.forEach((el) =>
-          el.classList.toggle("is-active", el.classList.contains(`circle--${name}`)),
+          el.classList.toggle(
+            "is-active",
+            el.classList.contains(`circle--${name}`),
+          ),
         );
       };
 
@@ -441,7 +444,8 @@ const l = lang;
       }
 
       const pickEmoji = () => {
-        const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
+        const isMobileViewport =
+          window.matchMedia("(max-width: 767px)").matches;
         return (
           isMobileViewport
             ? document.querySelector(".emoji.mobile")
@@ -735,14 +739,14 @@ const l = lang;
     }
     .hero__greeting.mobile {
       display: flex;
+      flex-direction: row;
       font-size: var(--font-title);
       align-items: center;
+      justify-content: center;
       margin: 0px;
       gap: 0px;
     }
-    .hero__greeting.mobile p {
-      transform: translateX(-26.095px);
-    }
+
     .hero__right-side {
       width: 60%;
       flex: 0;
