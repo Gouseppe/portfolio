@@ -16,44 +16,75 @@ import sise2 from "@/assets/projects/sise/sise-image2.webp";
 import sise3 from "@/assets/projects/sise/sise-image3.webp";
 import sise4 from "@/assets/projects/sise/sise-image4.webp";
 import sise5 from "@/assets/projects/sise/sise-image5.webp";
+import pokedexCard from "@/assets/projects/pokedex/pokedex-card.webp";
+import pokedex1 from "@/assets/projects/pokedex/pokedex-image1.webp";
+import pokedex2 from "@/assets/projects/pokedex/pokedex-image2.webp";
+import pokedex3 from "@/assets/projects/pokedex/pokedex-image3.webp";
+import pokedex4 from "@/assets/projects/pokedex/pokedex-image4.webp";
 // svg's
 import react from "@/assets/icons/CibReact 1.svg";
 import astro from "@/assets/icons/SimpleIconsAstro 1.svg";
 import typescript from "@/assets/icons/FileIconsTypescript 1.svg";
 // lucide's icons
 import { FolderTree } from "@lucide/astro";
+// icons
+import mui from "@/assets/icons/mui.svg";
+import tailwind from "@/assets/icons/tailwindcss.svg";
 interface Props {
   lang: "es" | "en";
 }
+
+const t = textPage;
+const { lang } = Astro.props;
+const l = lang;
+
 const projects = [
   {
     title: "Isla Bonita",
-    description: "Description of Project 1",
-    badgeimages: [react, astro, typescript],
+    description:
+      l === "es"
+        ? "Esta es una Landing Page moderna e interactiva desarrollada con React y Material-UI (MUI). El enfoque principal fue crear una experiencia de usuario fluida y completamente responsiva, adaptándose a la perfección tanto a dispositivos móviles como de escritorio. Cuenta con animaciones personalizadas utilizando Emotion (CSS-in-JS), un carrusel de imágenes automático y efectos visuales dinámicos (como escritura animada) que le dan vida a la identidad vibrante y tropical del proyecto."
+        : "This is a modern and interactive Landing Page built with React and Material-UI (MUI). The main focus was to create a seamless and fully responsive user experience, adapting perfectly to both mobile and desktop devices. It features custom animations using Emotion (CSS-in-JS), an auto-playing image carousel, and dynamic visual effects (like animated typing) that bring the project's vibrant and tropical identity to life.",
+    badgeimages: [react, mui, typescript],
     img: islaBonitaCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [islaBonita, islaBonita2, islaBonita3],
   },
   {
     title: "Phylum AI",
-    description: "Description of Project 2",
-    badgeimages: [react, astro, typescript],
+    description:
+      l === "es"
+        ? "      ? El proyecto Phylum AI es una aplicación web interactiva con un enfoque educativo y científico, diseñada para funcionar como un sistema experto (o motor de inferencia) biológico. Su propósito principal es guiar a los usuarios a través de un cuestionario dinámico para clasificar organismos vivos en su respectivo filo (phylum)."
+        : "The Phylum AI project is an interactive web application with an educational and scientific focus, designed to function as a biological expert system (or inference engine). Its main purpose is to guide users through a dynamic questionnaire to classify living organisms into their respective phylum.",
+    badgeimages: [react, typescript],
     img: phylumAiCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [phylumAi, phylumAi2, phylumAi3],
   },
   {
     title: "SISE",
-    description: "Description of Project 3",
-    badgeimages: [react, astro, typescript],
+    description:
+      l === "es"
+        ? "Trabaje en un equipo de cuatro personas por cinco meses para la creación de una aplicación web del área de salud encargada para la administración y generaciones de pdf’s de los registros médicos de los distintos empleados de las empresas. Encargado del diseño de la interfaz de usuario (UI) y de la creación de dichas ventanas, use herramientas como reactjs, typescript y MUI"
+        : "Collaborated in a four-person team over five months to develop a healthcare web application for managing and generating PDF medical records for corporate employees. Led the User Interface (UI) design and frontend development, utilizing React.js, TypeScript, and MUI.",
+    badgeimages: [react, typescript, mui],
     img: siseCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [sise1, sise2, sise3, sise4, sise5],
   },
+  ,
+  {
+    title: "Pokedex",
+    description:
+      l === "es"
+        ? "Proyecto con la finalidad de buscar y acceder a la información de todos los pokemones disponibles actualmente. Para este proyecto utilice astro, reactjs,typescript y tailwind"
+        : "Developed a project aimed at searching and accessing information for all currently available Pokémon. Built utilizing Astro, React.js, TypeScript, and Tailwind CSS.",
+    badgeimages: [react, typescript, astro, tailwind],
+    img: pokedexCard,
+    badgeShadowColor: "rgba(230, 230, 85, 0.26)",
+    imgSlides: [pokedex1, pokedex2, pokedex3, pokedex4],
+  },
 ];
-const t = textPage;
-const { lang } = Astro.props;
-const l = lang;
 ---
 
 <section class="section">
