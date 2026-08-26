@@ -42,33 +42,6 @@ const l = lang;
       </div>
     </div>
     <div class="section hero section-1" id="home">
-      <!-- <ExpandableButton ariaLabel="Más opciones" menuLabel="Más opciones">
-        <Plus size={20} slot="trigger" />
-        <Button
-          text="Opción 1"
-          ariaLabel="Opción 1"
-          href="#"
-          target="_self"
-          iconPosition="left"
-          width="auto"
-        />
-        <Button
-          text="Opción 2"
-          ariaLabel="Opción 2"
-          href="#"
-          target="_self"
-          iconPosition="left"
-          width="auto"
-        />
-        <Button
-          text="Opción 3"
-          ariaLabel="Opción 3"
-          href="#"
-          target="_self"
-          iconPosition="left"
-          width="auto"
-        />
-      </ExpandableButton> -->
       <div class="hero__left-side">
         <div class="hero__greeting">
           <div>
@@ -190,6 +163,7 @@ const l = lang;
   </main>
 </Layout>
 <script>
+  import Circle from "@/components/Circle.astro";
   import { gsap } from "gsap";
   import ScrollTrigger from "gsap/ScrollTrigger";
 
@@ -243,6 +217,7 @@ const l = lang;
 
   function buildCircle() {
     // alert("buildCircle");
+
     const circleContainer = document.querySelector(
       ".circle-container",
     ) as HTMLElement | null;
@@ -250,6 +225,8 @@ const l = lang;
       ".circle-layer",
     ) as HTMLElement | null;
     if (!circleContainer || !circleLayer) return;
+
+    if (isMobile()) return;
 
     // Cache layout reads una sola vez por construccion
     const cachedWidth = circleLayer.clientWidth;
@@ -266,10 +243,15 @@ const l = lang;
     const total = document.documentElement.scrollHeight - vh;
     if (total <= 0) return;
     const seg = vh / total;
+
     const win = (el: Element | null) => {
       if (!el) return 0;
-      return (el.getBoundingClientRect().top + window.scrollY - vh) / total;
+      return (
+        (el.getBoundingClientRect().top + window.scrollY - window.innerHeight) /
+        total
+      );
     };
+
     const s2 = win(document.querySelector(".section-2"));
     const s3 = win(document.querySelector(".section-3"));
     const s4 = win(document.querySelector(".section-4"));
@@ -292,49 +274,49 @@ const l = lang;
         s2,
       )
       .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(128, 0, 128, 0.50)",
-          duration: seg,
-          ease: "power1.out",
-        },
-        s2,
-      )
-      .to(
         circleContainer,
         { x: 0, y: bottomY, duration: seg, ease: "none" },
-        s3,
-      )
-      .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(230, 230, 85, 0.26)",
-          duration: seg,
-          ease: "power1.out",
-        },
         s3,
       )
       .to(
         circleContainer,
         { x: bottomRight, y: bottomY, duration: seg, ease: "none" },
         s4,
-      )
-      .to(
-        ".circle",
-        {
-          backgroundColor: "rgba(255, 86, 86, 0.27)",
-          duration: seg,
-          ease: "power1.out",
-        },
-        s4,
       );
   }
 
   function initPage() {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     ctx = gsap.context(() => {
-      // ---------- circulo y colores
-      !isMobile() && buildCircle();
-      // isMobile() && document.querySelector(".circle-container")?.remove();
+      // ---------- circulo: movimiento (PC) y color (crossfade al llegar a cada seccion)
+      buildCircle();
+
+      const circleLayers = Array.from(
+        document.querySelectorAll(".circle-stack .circle"),
+      ) as HTMLElement[];
+      const setActiveCircle = (name: string) => {
+        circleLayers.forEach((el) =>
+          el.classList.toggle("is-active", el.classList.contains(`circle--${name}`)),
+        );
+      };
+
+      const circleSections = [
+        { sel: ".section-2", name: "s2" },
+        { sel: ".section-3", name: "s3" },
+        { sel: ".section-4", name: "s4" },
+      ];
+      circleSections.forEach(({ sel, name }, i) => {
+        ScrollTrigger.create({
+          trigger: sel,
+          start: "top center",
+          onEnter: () => setActiveCircle(name),
+          onLeaveBack: () =>
+            setActiveCircle(i === 0 ? "base" : circleSections[i - 1].name),
+        });
+      });
 
       gsap.to("html", {
         "--button-color": "rgba(128, 0, 128, 0.50)",
@@ -368,15 +350,19 @@ const l = lang;
       });
 
       // ---------- animacion de la navbar
-      gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
-      gsap.to(".navbar-container", {
-        y: 0,
-        duration: 1,
-        ease: "power1.out",
-        autoAlpha: 1,
-        zIndex: 100,
-        delay: isFirstLoad ? 3.5 : 0,
-      });
+      if (prefersReducedMotion) {
+        gsap.set(".navbar-container", { y: 0, autoAlpha: 1, zIndex: 100 });
+      } else {
+        gsap.set(".navbar-container", { y: -100, autoAlpha: 0 });
+        gsap.to(".navbar-container", {
+          y: 0,
+          duration: 1,
+          ease: "power1.out",
+          autoAlpha: 1,
+          zIndex: 100,
+          delay: isFirstLoad ? 3.5 : 0,
+        });
+      }
       const elemento = document.querySelector(
         ".navbar-container",
       ) as HTMLElement;
@@ -402,171 +388,171 @@ const l = lang;
       });
 
       // ---------- animacion de mi persona
-      const meImagesTl = gsap.timeline({
-        repeat: -1,
-        delay: isFirstLoad ? 3 : 0,
-      });
+      if (prefersReducedMotion) {
+        gsap.set(".me-waving", { autoAlpha: 1 });
+      } else {
+        const meImagesTl = gsap.timeline({
+          repeat: -1,
+          delay: isFirstLoad ? 3 : 0,
+        });
 
-      meImagesTl
-        .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
-        .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
-        // Animación de balanceo
-        .to(
-          ".me-waving",
-          { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
-          0.1,
-        )
-        .to(
-          ".me-waving",
-          { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
-          0.4,
-        )
-        .to(
-          ".me-waving",
-          { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
-          0.7,
-        )
-        // Segunda imagen: .me-playing
-        .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
-        .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
-        // Animación de salto
-        .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
-        .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
+        meImagesTl
+          .set(".me-waving", { autoAlpha: 1, rotation: 0, x: 0 }, 0)
+          .set(".me-playing, .me-coding", { autoAlpha: 0 }, 0)
+          // Animación de balanceo
+          .to(
+            ".me-waving",
+            { rotation: 5, x: 10, duration: 0.3, ease: "power1.inOut" },
+            0.1,
+          )
+          .to(
+            ".me-waving",
+            { rotation: -5, x: -10, duration: 0.3, ease: "power1.inOut" },
+            0.4,
+          )
+          .to(
+            ".me-waving",
+            { rotation: 0, x: 0, duration: 0.2, ease: "power1.inOut" },
+            0.7,
+          )
+          // Segunda imagen: .me-playing
+          .set(".me-playing", { autoAlpha: 1, y: 0 }, 2)
+          .set(".me-waving, .me-coding", { autoAlpha: 0 }, 2)
+          // Animación de salto
+          .to(".me-playing", { y: -20, duration: 0.3, ease: "power1.out" }, 2.1)
+          .to(".me-playing", { y: 0, duration: 0.4, ease: "bounce.out" }, 2.4)
 
-        // Tercera imagen: .me-coding
-        .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
-        .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
-        // Animación de zoom
-        .to(
-          ".me-coding",
-          { scale: 1.05, duration: 0.2, ease: "power1.inOut" },
-          4.1,
-        )
-        .to(
-          ".me-coding",
-          { scale: 1, duration: 0.3, ease: "power1.inOut" },
-          4.3,
-        )
-        // Pausa para la última imagen
-        .to({}, { duration: 2 }, 5);
+          // Tercera imagen: .me-coding
+          .set(".me-coding", { autoAlpha: 1, scale: 1 }, 4)
+          .set(".me-waving, .me-playing", { autoAlpha: 0 }, 4)
+          // Animación de zoom
+          .to(
+            ".me-coding",
+            { scale: 1.05, duration: 0.2, ease: "power1.inOut" },
+            4.1,
+          )
+          .to(
+            ".me-coding",
+            { scale: 1, duration: 0.3, ease: "power1.inOut" },
+            4.3,
+          )
+          // Pausa para la última imagen
+          .to({}, { duration: 2 }, 5);
+      }
 
-      if (isFirstLoad) {
-        // ---------- intro completa (solo primera carga)
-        let isAnimating = false; // Variable para controlar el estado de la animación
-        let mm = gsap.matchMedia();
-        mm.add(
-          {
-            isMobile: "(max-width: 767px)",
-            isDesktop: "(min-width: 768px)",
-          },
-          (context: any) => {
-            let { isMobile, isDesktop } = context.conditions;
-            const emoji = isMobile
-              ? (document.querySelector(".emoji.mobile") as HTMLElement)
-              : (document.querySelector(".emoji") as HTMLElement);
+      const pickEmoji = () => {
+        const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
+        return (
+          isMobileViewport
+            ? document.querySelector(".emoji.mobile")
+            : document.querySelector(".emoji:not(.mobile)")
+        ) as HTMLElement | null;
+      };
 
-            const initialAnimation = gsap.timeline({
-              paused: true,
-              defaults: { ease: "power1.inOut" },
+      if (isFirstLoad && !prefersReducedMotion) {
+        // ---------- intro completa (solo primera carga, tecnica FLIP con transforms)
+        const emoji = pickEmoji();
+
+        let hoverBusy = false;
+        const attachHoverWave = () => {
+          if (!emoji) return;
+          emoji.addEventListener("mouseenter", () => {
+            if (hoverBusy) return;
+            hoverBusy = true;
+            gsap.to(emoji, {
+              rotation: 20,
+              duration: 0.5,
+              yoyo: true,
+              repeat: 3,
+              transformOrigin: "bottom right",
+              ease: "power1.inOut",
               onComplete: () => {
-                // Aquí agregas el listener solo cuando termina toda la animación inicial
-
-                emoji.addEventListener("mouseenter", () => {
-                  if (!isAnimating) {
-                    gsap.to(".emoji", {
-                      rotation: 20,
-                      duration: 0.5,
-                      yoyo: true,
-                      repeat: 3,
-                      transformOrigin: "bottom right",
-                      ease: "power1.inOut",
-                      onStart: () => {
-                        isAnimating = true;
-                      },
-                      onComplete: () => {
-                        isAnimating = false;
-                      },
-                    });
-                  }
-                });
+                hoverBusy = false;
               },
             });
-            initialAnimation
-              .set(emoji, {
-                top: "50%",
-                left: "50%",
-                transform: "translate(50%, 50%) scale(4)",
-                position: "absolute",
-                transformOrigin: "bottom right",
-              })
-              .to(emoji, {
-                opacity: 1,
-                duration: 0.9,
-              })
-              .to(emoji, {
-                rotation: 20,
-                yoyo: true,
-                repeat: 3,
-                duration: 0.5,
-              })
-              .to(emoji, {
-                top: "auto",
-                left: "auto",
-                x: isMobile ? 98.295 : 98.5,
-                transform: "translate(0%, 0%)",
-                scale: 1,
-                duration: 0.5,
-                delay: 0.5,
-              })
-              .to(".black-screen", {
-                zIndex: -1,
-                autoAlpha: 0,
-                duration: 0.5,
-              })
-              .set("body", { overflowY: "auto" })
-              .fromTo(
-                ".right-side__button-container",
-                {
-                  y: 20,
-                  opacity: 0, // Animamos desde opacity: 0
-                },
-                {
-                  duration: 1,
-                  stagger: 0.15,
-                  y: 0,
-                  opacity: 1,
-                  ease: "sine.out",
-                },
-              );
+          });
+        };
 
-            // Ejecutar la animación inicial una vez que la página haya cargado completamente
-            if (typeof window !== "undefined") {
-              initialAnimation.play();
-            }
-          },
-        );
+        const playIntro = () => {
+          if (!emoji) {
+            document.body.style.overflowY = "auto";
+            gsap.set(".right-side__button-container", { opacity: 1, y: 0 });
+            gsap.set(".black-screen", { autoAlpha: 0, zIndex: -1 });
+            return;
+          }
+
+          // FLIP: medir el lugar natural del emoji y colocarlo en el centro solo con transforms.
+          // El segundo set mide el rect ya escalado para centrar exacto sin importar transformOrigin.
+          gsap.set(emoji, { scale: 4, transformOrigin: "bottom right" });
+          const rect = emoji.getBoundingClientRect();
+          gsap.set(emoji, {
+            x: window.innerWidth / 2 - (rect.left + rect.width / 2),
+            y: window.innerHeight / 2 - (rect.top + rect.height / 2),
+          });
+
+          gsap
+            .timeline({
+              defaults: { ease: "power1.inOut" },
+              onComplete: attachHoverWave,
+            })
+            .to(emoji, { opacity: 1, duration: 0.9 })
+            .to(emoji, {
+              rotation: 20,
+              yoyo: true,
+              repeat: 3,
+              duration: 0.5,
+            })
+            .to(emoji, { x: 0, y: 0, scale: 1, duration: 0.5, delay: 0.5 })
+            .to(".black-screen", { autoAlpha: 0, duration: 0.5 })
+            .set(".black-screen", { zIndex: -1 })
+            .set("body", { overflowY: "auto" })
+            .fromTo(
+              ".right-side__button-container",
+              { y: 20, opacity: 0 },
+              {
+                duration: 1,
+                stagger: 0.15,
+                y: 0,
+                opacity: 1,
+                ease: "sine.out",
+              },
+            );
+        };
+
+        // Esperar a que la fuente cargue para medir la posicion natural sin desfases
+        if (document.fonts?.ready) {
+          document.fonts.ready.then(playIntro);
+        } else {
+          playIntro();
+        }
       } else {
-        // ---------- entrada rapida al navegar
+        // ---------- entrada rapida al navegar (o movimiento reducido)
         document.body.style.overflowY = "auto";
-        gsap.fromTo(
-          ".right-side__button-container",
-          {
-            y: 20,
-            opacity: 0, // Animamos desde opacity: 0
-          },
-          {
-            duration: 1,
-            stagger: 0.15,
-            y: 0,
-            opacity: 1,
-            ease: "sine.out",
-          },
-        );
-        gsap.to(".black-screen", {
-          zIndex: -1,
-          autoAlpha: 0,
-          duration: 0.5,
-        });
+        if (prefersReducedMotion) {
+          // Estado final directo, sin animaciones
+          const emoji = pickEmoji();
+          if (emoji) gsap.set(emoji, { opacity: 1 });
+          gsap.set(".right-side__button-container", { opacity: 1, y: 0 });
+          gsap.set(".navbar-container", { y: 0, autoAlpha: 1, zIndex: 100 });
+          gsap.set(".black-screen", { autoAlpha: 0, zIndex: -1 });
+        } else {
+          gsap.fromTo(
+            ".right-side__button-container",
+            { y: 20, opacity: 0 },
+            {
+              duration: 1,
+              stagger: 0.15,
+              y: 0,
+              opacity: 1,
+              ease: "sine.out",
+            },
+          );
+          gsap.to(".black-screen", {
+            autoAlpha: 0,
+            duration: 0.5,
+            onComplete: () => gsap.set(".black-screen", { zIndex: -1 }),
+          });
+        }
       }
     });
     activeBuildCircle = isMobile() ? undefined : buildCircle;
@@ -721,13 +707,10 @@ const l = lang;
   }
 
   .emoji {
+    /* Vive en el flujo natural (flex item junto al saludo); la intro lo
+       desplaza solo con transforms y al terminar queda exactamente aqui */
     transform-origin: bottom center;
     z-index: 40;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    y: -10;
-    scale: 4;
     opacity: 0;
   }
   @media (min-width: 768px) {

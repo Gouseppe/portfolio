@@ -3,41 +3,81 @@ const { colorPC, colorMobile } = Astro.props;
 ---
 
 <div
+  class="circle-stack"
   style={`--colorPC: ${colorPC}; --colorMobile: ${colorMobile};`}
-  class="circle"
 >
+  <div class="circle circle--base is-active"></div>
+  <div class="circle circle--s2"></div>
+  <div class="circle circle--s3"></div>
+  <div class="circle circle--s4"></div>
 </div>
+
 <style>
-  .circle {
+  .circle-stack {
+    position: relative;
     width: 520px;
     height: 520px;
     flex-shrink: 0;
+  }
+
+  .circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border-radius: 544px;
-    background-color: var(--colorPC);
-    filter: blur(100.25px);
+    filter: blur(90.25px);
+    opacity: 0;
+    transition: opacity 2s ease;
     animation: pulse 3s infinite;
+  }
+
+  .circle.is-active {
+    opacity: 1;
+  }
+
+  .circle--base {
+    background-color: var(--colorPC);
+  }
+  .circle--s2 {
+    background-color: rgba(128, 0, 128, 0.5);
+  }
+  .circle--s3 {
+    background-color: rgba(230, 230, 85, 0.26);
+  }
+  .circle--s4 {
+    background-color: rgba(255, 86, 86, 0.27);
   }
 
   @keyframes pulse {
     0% {
       transform: scale(1);
-      opacity: 1;
     }
     50% {
       transform: scale(1.2);
     }
     100% {
       transform: scale(1);
-      opacity: 1;
     }
   }
 
   @media (max-width: 760px) {
-    .circle {
+    .circle-stack {
       width: 60vw;
       height: 60vw;
+    }
+    .circle {
       filter: blur(60.25px);
+    }
+    .circle--base {
       background-color: var(--colorMobile);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .circle-stack {
+      animation: none;
     }
   }
 </style>
