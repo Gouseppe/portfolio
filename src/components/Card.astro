@@ -1,7 +1,7 @@
 ---
 import Badge from "./Badge.astro";
 // lucide's icons
-import { View, CircleX, Binoculars } from "@lucide/astro";
+import { View, CircleX, Binoculars, ExternalLink } from "@lucide/astro";
 
 interface Props {
   title: string;
@@ -10,6 +10,7 @@ interface Props {
   img?: { src: string };
   badgeShadowColor?: string;
   imgSlides: { src: string }[];
+  projectLink?: string;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   badgeimages,
   badgeShadowColor,
   imgSlides = [],
+  projectLink,
 } = Astro.props;
 ---
 
@@ -60,8 +62,28 @@ const {
         }
       </div>
       <div class="dialog-content__info-wrapper visible">
-        <h2 class="dialog-content__title">{title}</h2>
-        <p class="dialog-content__description">{description}</p>
+        {
+          projectLink ? (
+            <a
+              href={projectLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="dialog-content__link"
+            >
+              <ExternalLink width="16" height="16" />
+              <span>Ver proyecto</span>
+            </a>
+          ) : (
+            <span class="dialog-content__link dialog-content__link--disabled">
+              <ExternalLink width="16" height="16" />
+              <span>Proyecto no disponible</span>
+            </span>
+          )
+        }
+        <div class="visible">
+          <h2 class="dialog-content__title">{title}</h2>
+          <p class="dialog-content__description">{description}</p>
+        </div>
       </div>
       <button class="cancel-button visible"
         ><CircleX width="24" height="24" /></button
@@ -269,6 +291,8 @@ const {
     top: 1rem;
     right: 1rem;
 
+    cursor: pointer;
+
     background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
     border: none;
@@ -462,18 +486,53 @@ const {
     outline: none;
   }
   .dialog-content__info-wrapper {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dialog-content__info-wrapper > div {
     background: rgba(0, 0, 0, 0.5);
     padding: 1rem;
     border-radius: 8px;
     max-width: 60%;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
+    display: flex;
     color: white;
+    flex-direction: column;
+    gap: 0.5rem;
   }
   .dialog-content__info-wrapper,
   .dialog-content__slides-container {
     transition: opacity 0.5s ease;
+  }
+  .dialog-content__title {
+    margin: 0;
+  }
+  .dialog-content__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition:
+      background 0.3s ease,
+      transform 0.2s ease;
+    width: fit-content;
+  }
+  .dialog-content__link:hover {
+    background: hsla(0, 0, 0, 0.5);
+    transform: scale(1.03);
+  }
+  .dialog-content__link--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   .dialog-content.only-background .visible {
     opacity: 0;
