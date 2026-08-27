@@ -49,6 +49,7 @@ const projects = [
     img: islaBonitaCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [islaBonita, islaBonita2, islaBonita3],
+    projectLink: "https://ecommerce-h88a.onrender.com/landing-page",
   },
   {
     title: "Phylum AI",
@@ -60,6 +61,7 @@ const projects = [
     img: phylumAiCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [phylumAi, phylumAi2, phylumAi3],
+    projectLink: "https://phylum-ai.vercel.app/",
   },
   {
     title: "SISE",
@@ -82,6 +84,7 @@ const projects = [
     img: pokedexCard,
     badgeShadowColor: "rgba(230, 230, 85, 0.26)",
     imgSlides: [pokedex1, pokedex2, pokedex3, pokedex4],
+    projectLink: "https://pokedex-web-astro.vercel.app/",
   },
 ];
 ---
@@ -108,6 +111,7 @@ const projects = [
             img={project.img}
             badgeShadowColor="rgba(230, 230, 85, 0.26)"
             imgSlides={project.imgSlides}
+            projectLink={project.projectLink}
           />
         ))
       }
