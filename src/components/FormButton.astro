@@ -1,4 +1,6 @@
 ---
+import Loader from "./Loader.astro";
+
 interface Props {
   iconPosition: "left" | "right";
   text?: string;
@@ -27,25 +29,81 @@ let {
     style={`width: ${width};`}
   >
     <div class="content">
-      {
-        iconPosition === "left" && (
-          <div class="icon">
-            <slot />
-            <div class="succesIcon" />
-          </div>
-        )
-      }
-      {text && <span>{text}</span>}
-      {
-        iconPosition === "right" && (
-          <div class="icon">
-            <slot />
-          </div>
-        )
-      }
+      <div class="div-animation">
+        {
+          iconPosition === "left" && (
+            <div class="icon">
+              <slot />
+              <div class="succesIcon" />
+            </div>
+          )
+        }
+        {text && <span>{text}</span>}
+        {
+          iconPosition === "right" && (
+            <div class="icon">
+              <slot />
+            </div>
+          )
+        }
+      </div>
     </div>
+    <div class="loader-wrapper">
+      <Loader />
+    </div>
+    <div class="success-message">Enviado correctamente</div>
+    <div class="error-message">Error</div>
   </button>
 </div>
+
+<script>
+  let button: HTMLButtonElement | null = null;
+  let content: HTMLDivElement | null = null;
+  document.addEventListener("astro:page-load", () => {
+    button = document.querySelector(".form-button") as HTMLButtonElement;
+    content = button.querySelector(".content") as HTMLDivElement;
+  });
+  document.addEventListener("message-success", () => {
+    content && content.classList.remove("sending");
+    content && content.classList.add("success");
+    console.log("message-success event received");
+    if (button) {
+      button.disabled = false;
+      button.style.cursor = "pointer";
+      button.classList.add("success");
+    }
+    setTimeout(() => {
+      content && content.classList.remove("success");
+    }, 2000);
+  });
+  document.addEventListener("message-error", () => {
+    content && content.classList.remove("sending");
+    content && content.classList.add("error");
+    console.log("message-error event received");
+
+    if (button) {
+      button.disabled = false;
+      button.style.cursor = "pointer";
+      button.classList.add("error");
+    }
+    setTimeout(() => {
+      content && content.classList.remove("error");
+    }, 2000);
+  });
+  document.addEventListener("sending-message", () => {
+    const button = document.querySelector(".form-button") as HTMLButtonElement;
+    // if (button) {
+    //   button.disabled = true;
+    //   button.style.cursor = "not-allowed";
+    // }
+    console.log("sending-message event received");
+    console.log("content", content);
+    if (content) {
+      // agregar clase "sending" al contenido para animación
+      content.classList.add("sending");
+    }
+  });
+</script>
 
 <style>
   /* Wrapper con los cortes poligonales idénticos y borde metálico */
@@ -69,6 +127,7 @@ let {
 
   /* Botón con fondo translúcido y sombras internas metálicas */
   .form-button {
+    position: relative;
     display: flex;
     box-sizing: border-box;
     justify-content: center;
@@ -145,6 +204,15 @@ let {
     font-weight: 600;
     color: #ffffff;
   }
+  .div-animation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition:
+      transform 1s ease-in-out,
+      opacity 1s ease-in-out;
+  }
 
   .icon {
     display: flex;
@@ -170,6 +238,53 @@ let {
   /* Focus states */
   .form-button:focus-visible {
     outline: none;
+  }
+
+  .success-message,
+  .error-message,
+  .loader-wrapper {
+    color: #ffffff;
+    display: block;
+    position: absolute;
+    opacity: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    font-weight: bold;
+    transition:
+      transform 1s ease-in-out,
+      opacity 1s ease-in-out;
+  }
+  .loader-wrapper {
+    display: block;
+  }
+
+  .content.sending .div-animation,
+  .content.success .div-animation,
+  .content.error .div-animation {
+    transform: translateY(-750%);
+    opacity: 0;
+  }
+
+  .content.success ~ .loader-wrapper,
+  .content.error ~ .loader-wrapper {
+    transform: translate(-50%, -150%);
+    opacity: 0;
+  }
+  .content.success ~ .success-message,
+  .content.error ~ .error-message {
+    display: block;
+    opacity: 1;
+    /* que al finalizar la animacion quede en donde termino */
+
+    transform: translate(-50%, -50%);
+  }
+  .content.sending ~ .loader-wrapper {
+    display: block;
+    opacity: 1;
+    /* que al finalizar la animacion quede en donde termino */
+
+    transform: translate(-50%, -50%);
   }
 
   /* Responsivo para móviles */

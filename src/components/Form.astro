@@ -147,6 +147,7 @@ const l = lang;
       <div class="input-group">
         <label for="message">{t.form.message.label[l]}</label>
         <textarea
+         
           id="message"
           name="message"
           placeholder={t.form.message.placeholder[l]}
@@ -235,10 +236,13 @@ const l = lang;
 <script>
   import emailjs from "@emailjs/browser";
 
-  const sendForm = (e: SubmitEvent) => {
+  const sendForm = async (e: SubmitEvent) => {
     e.preventDefault(); // Evita el envío automático para manejarlo manualmente
 
-    emailjs.send(
+    // llamar a un evento custom llamado "sending-message" para deshabilitar el botón y mostrar el loader
+    document.dispatchEvent(new CustomEvent("sending-message"));
+
+    const response = await emailjs.send(
       import.meta.env.PUBLIC_EMAILJS_SERVICE_ID,
       import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID,
       {
@@ -249,14 +253,22 @@ const l = lang;
           .value,
       },
     );
+    if (response.status === 200) {
+      // llamar a un evento custom llamado "message-success" para mostrar mensaje de éxito
+      document.dispatchEvent(new CustomEvent("message-success"));
+      (document.querySelector("#contactForm") as HTMLFormElement).reset();
+    } else {
+      // llamar a un evento custom llamado "message-error" para mostrar mensaje de error
+      document.dispatchEvent(new CustomEvent("message-error"));
+      alert("Error al enviar el mensaje. Por favor, inténtalo de nuevo.");
+    }
   };
   emailjs.init(import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY);
   (document.querySelector("#contactForm") as HTMLFormElement).addEventListener(
     "submit",
     (e: SubmitEvent) => {
-      console.log("Formulario enviado");
       e.preventDefault();
-      // sendForm(e);
+      sendForm(e);
     },
   );
 </script>
